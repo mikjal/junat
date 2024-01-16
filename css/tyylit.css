@@ -1,3 +1,9 @@
-#kartta {
+body {
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+#kartta-alue {
     height: 100%;
 }
