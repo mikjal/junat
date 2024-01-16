@@ -1,0 +1,8 @@
+Toteuttaa verkkosivu jossa esitetään lähes reaaliaikaisesti kartalla Suomen rataverkossa liikkuvat junat. Sekä valittaessa kartalta juna, näytetään sen aikataulutiedot. 
+
+Kaikki juniin liittyvät tiedot haetaan digitraffic.fi-verkkosivun avoimen datan rajapinnasta ( https://www.digitraffic.fi/rautatieliikenne/ ). 
+Karttana käytetään OpenStreetMapin karttapohjaa ( https://www.openstreetmap.org ), jonka päälle junia esittävät merkit luodaan Leafletin avulla ( https://leafletjs.com ). 
+
+Koodin muokkaukseen käytetään Visual Studio Codea ja versionhallinta toteutetaan Gitin ja GitHubin avulla. Yhteisesti on sovittu että muuttujien ja funktioiden nimet ovat 
+suomenkielisiä ja kirjoitusasuna käytetään camelCasea.
+Verkkosivun testaamiseen käytetään useampaa nykyaikaista selainta sekä tietokoneella että mobiililaitteilla.
