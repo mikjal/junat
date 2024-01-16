@@ -21,22 +21,6 @@ function luoKartta() {
 
 }
 
-function lataaJSON(urli, callback) {
-    fetch(urli)
-    .then(response => {
-        if (!response.ok) {
-            callback(response.status,null);
-        }
-        return response.json();
-    })
-    .then(response => {
-        callback(null,response);
-    })
-    .catch(error => {
-        callback(error,null);
-    })
-}
-
 function haeJSON(osoite, paluufunktio) {
     fetch(osoite) // haetaan tiedot osoitteesta
     .then(vastaus => { // fetch palauttaa Promisen
