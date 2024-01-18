@@ -1,4 +1,4 @@
-let kartta;
+let kartta, MQTTyhteys;
 
 function luoKartta() {
     // Luodaan kartta ilman zoomausnappuloita (tulevat oletuksena ylös vasemmalle)
@@ -38,8 +38,37 @@ function haeJSON(osoite, paluufunktio) {
 
 }
 
+function asetaMQTTkuuntelija() {
+    MQTTyhteys = new Paho.MQTT.Client("rata.digitraffic.fi", 443, "myclientid_" + parseInt(Math.random() * 10000, 10));
+
+    // Mitä tapahtuu jos yhteys katkeaa?
+    MQTTyhteys.onConnectionLost = function(responseObject) {
+        console.warn("MQTT-yhteys katkesi: " + responseObject.errorMessage);
+      };
+
+    // Mitä tehdään kun viesti saapuu?
+      MQTTyhteys.onMessageArrived = function(message) {
+        console.log(JSON.parse(message.payloadString));
+    };
+
+    let maaritykset = {
+        useSSL:true,
+      timeout: 3,
+      onSuccess: function() { // Yhteyden muodostuessa tilataan junien paikkatieto
+        MQTTyhteys.subscribe('train-locations/#', { qos: 0 });
+      },
+      onFailure: function(message) { // Yhteyden muodostaminen epäonnituu
+        console.warn("MQTT-yhteyden muodostaminen epäonnistui: " + message.errorMessage);
+      }
+    };
+    
+    MQTTyhteys.connect(maaritykset);
+}
+
 window.onload = () => {
     luoKartta();
+
+    asetaMQTTkuuntelija();
 
     haeJSON('https://rata.digitraffic.fi/api/v1/train-locations/latest/', (virhekoodi, vastaus) => {
         // jos virhekoodi on jotain muuta kuin null, ilmoitetaan virheestä
@@ -47,13 +76,13 @@ window.onload = () => {
         else { // virhekoodi on null eli virheitä ei ole tapahtunut, vastaus sisältää JSON-tiedot
            
             // esim. ensimmäisenä junan tiedot
-            console.log(vastaus[0]);
+            //console.log(vastaus[0]);
 
             // ensimmäisen junan numero
-            console.log(vastaus[0].trainNumber);
+            //console.log(vastaus[0].trainNumber);
 
             // ensimmäisen junan lähtöpäivä
-            console.log(vastaus[0].departureDate);
+            //console.log(vastaus[0].departureDate);
         
         }
     })
