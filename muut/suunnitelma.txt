@@ -1,10 +1,17 @@
-Toteuttaa verkkosivu jossa esitetään lähes reaaliaikaisesti kartalla Suomen rataverkossa liikkuvat junat. Valittaessa kartalta juna, näytetään sen aikataulutiedot. 
+Ryhmä toteuttaa verkkosivun, jossa esitetään kartalla lähes reaaliaikaisesti Suomen rataverkossa
+liikkuvat junat. Kun kartalta valitaan junaa esittävä merkki, näytetään valitun junan aikataulutiedot.
 
-Kaikki juniin liittyvät tiedot haetaan digitraffic.fi-verkkosivun avoimen datan rajapinnasta ( https://www.digitraffic.fi/rautatieliikenne/ ). 
-Karttana käytetään OpenStreetMapin karttapohjaa ( https://www.openstreetmap.org ), jonka päälle junia esittävät merkit luodaan Leafletin avulla ( https://leafletjs.com ). 
+Sivu toteutetaan käyttäen HTML:ää, CSS:ää ja JavaScriptiä. Kaikki juniin liittyvät tiedot haetaan 
+digitraffic.fi-verkkosivun avoimen datan rajapinnasta (https://www.digitraffic.fi/rautatieliikenne/). 
+Karttana käytetään OpenStreetMapin karttapohjaa (https://www.openstreetmap.org), jonka päälle junia 
+esittävät merkit luodaan Leafletin avulla (https://leafletjs.com). Junia osoittavien merkkien paikka
+kartalla perustuu ainoastaan rajapinnasta saatavaan tietoon, eikä junien liikettä lasketa tai
+arvioida muulla tavoin.
 
-Koodin kirjoittamiseen käytetään Visual Studio Codea ja versionhallinta toteutetaan Gitin ja GitHubin avulla.  
-Verkkosivun testaamiseen käytetään useampaa nykyaikaista selainta sekä tietokoneella että mobiililaitteilla.
+Koodin kirjoittamiseen käytetään Visual Studio Codea ja versionhallinta toteutetaan Gitin ja GitHubin
+avulla. Yhteydenpitoon ryhmä käyttää Teamsia. Verkkosivun testaamiseen käytetään useampaa nykyaikaista 
+selainta sekä tietokoneella että mobiililaitteilla.
 
-Yhteisesti on sovittu että muuttujien ja funktioiden nimet ovat suomenkielisiä ja kirjoitusasuna käytetään camelCasea. 
-Tarkempi työnjako sovitaan projektin edetessä, alustavasta on kuitenkin sovittu että valmista tulisi olla viimeistään 11.2.
+Ryhmään kuuluvat Tuomas Lappalainen, Tommi Savolainen sekä Mika Jalkanen. Yhteisesti on sovittu että
+muuttujien ja funktioiden nimet ovat suomenkielisiä ja kirjoitusasuna käytetään camelCasea.
+Tarkempi työnjako sovitaan projektin edetessä, valmiiksi sivu pyritään saamaan viimeistään 11.2.
