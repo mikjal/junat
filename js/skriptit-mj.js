@@ -112,6 +112,7 @@ function etsiAsemanNimi(uic) {
         // Jos indeksi = -1 liikennepaikkaa ei löytynyt, jos indeksi on jotain muuta, indeksi sisältää
         // paikan tiedoissa josta liikennepaikka löytyi
         if (indeksi != -1) {
+            // asetetaan asemanimeksi stationName
             let asemanimi = mt.liikennepaikat.tiedot[indeksi].stationName;
             // poistetaan asema-sana, jos sellainen löytyy
             asemanimi = asemanimi.replace(' asema','');
