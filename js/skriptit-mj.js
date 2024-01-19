@@ -1,6 +1,7 @@
 let kartta,
     MQTTyhteys,
-    debug = false;
+    debug = false,
+    junat = [];
 
 // metatiedot
 const mt = {
@@ -33,6 +34,103 @@ const mt = {
         tiedot: null,
     },
 };
+
+class junaOlio {
+    constructor(junanro) {
+        this.numero = junanro;
+        // paikkatieto
+        this.pkt = null;
+    /*
+        this.pkt:
+        {
+            "trainNumber": 8686,
+            "departureDate": "2024-01-19",
+            "timestamp": "2024-01-19T13:52:44.000Z",
+            "location": {
+                "type": "Point",
+                "coordinates": [
+                    24.861881,
+                    60.248733
+                ]
+            },
+            "speed": 64,
+            "accuracy": 5
+        }
+    */
+
+        // aikataulu
+        this.akt = null;
+        // karttamerkki
+        this.karttamerkki = null;
+    }
+
+
+    paivitaPaikkatieto(uusiPaikkatieto) {
+        // tarkistetaan onko vanha paikkatieto olemassa
+        if (this.pkt) { // this.pkt != null
+            // vanha paikkatieto on olemassa, verrataan aikaleimoja
+            // jos uuden paikkatiedon aikaleima on aiempi kuin jo tallennetun, 
+            // uutta paikkatietoa ei tallenneta
+            if (new Date(this.pkt.timestamp) < new Date(uusiPaikkatieto.timestamp)) {
+                // vanhan paikkatiedon aikaleima on vanhempi kuin uuden, päivitetään paikkatieto
+                this.pkt = uusiPaikkatieto;
+                // siirretään merkkiä kartalla uuden paikkatiedon mukaisesti
+                this.piirraMerkki();
+            }
+        } else {
+            // vanhaa paikkatietoa ei ole olemassa
+            this.pkt = uusiPaikkatieto;
+            this.piirraMerkki();
+        }
+    }
+
+    piirraMerkki() {
+        // tarkistetaan onko merkki jo olemassa
+        if (this.karttamerkki) {
+            // merkki on jo olemassa, siirretään sitä
+            this.karttamerkki = this.karttamerkki.setLatLng([this.pkt.location.coordinates[1],this.pkt.location.coordinates[0]]);
+        } else {
+            // merkkiä ei vielä ole kartalla, "piirretään" se
+            this.karttamerkki = L.marker([this.pkt.location.coordinates[1],this.pkt.location.coordinates[0]])
+                                .bindTooltip(this.numero.toString())
+                                .addTo(kartta);
+            this.karttamerkki.on('click',() => {
+                // tänne tulee funktiokutsu jolla näytetään junan aikataulu
+                console.log('Klikattiin junan',this.numero,'merkkiä. Junan nopeus: ',this.pkt.speed);
+            })
+        }
+    }
+}
+
+// etsii junan indeksinumeron junat-listalta, palauttaa null jos junaa ei löydy
+function etsiJunaListalta(numero) {
+    
+    let indeksi = junat.findIndex((juna) => {
+        return juna.numero == numero;
+    });
+
+    return (indeksi == -1 ) ? null : indeksi;
+
+    /*
+    if (indeksi == -1) return null 
+    else return indeksi;
+    */
+
+}
+
+function paivitaJunanPaikkatieto(paikkatieto) {
+    // tarkistetaan löytyykö juna jo listalta
+    let paikkaListalla = etsiJunaListalta(paikkatieto.trainNumber);
+
+    if (!paikkaListalla) { // paikkaListalla == null
+        // junaa ei löydy listalta, luodaan uusi
+        let uusiJuna = new junaOlio(paikkatieto.trainNumber);
+        paikkaListalla = junat.push(uusiJuna) - 1;
+    }
+
+    junat[paikkaListalla].paivitaPaikkatieto(paikkatieto);
+}
+
 
 function luoKartta() {
     // Luodaan kartta ilman zoomausnappuloita (tulevat oletuksena ylös vasemmalle)
@@ -86,7 +184,9 @@ function asetaMQTTkuuntelija() {
 
     // Mitä tehdään kun viesti saapuu?
     MQTTyhteys.onMessageArrived = function (message) {
-        if (debug) console.log('Saatiin paikkatieto junalle nro', JSON.parse(message.payloadString).trainNumber);
+        let paikkatieto = JSON.parse(message.payloadString);
+        if (debug) console.log('Saatiin paikkatieto junalle nro', paikkatieto.trainNumber);
+        paivitaJunanPaikkatieto(paikkatieto);
     };
 
     let maaritykset = {
