@@ -1,6 +1,8 @@
-function etsiLahtoJaMaaranpaa() {
+function etsiLahtoJaMaaranpaa(junanNro) {
     mt.junat.tiedot.forEach((element) => {
-        console.log('Lähtö: ' + etsiAsemanNimi(element.timeTableRows[0].stationUICCode));
-        console.log('Määränpää: ' + etsiAsemanNimi(element.timeTableRows[element.timeTableRows.length - 1].stationUICCode));
+        if (junanNro == element.trainNumber) {
+            console.log('Lähtö: ' + etsiAsemanNimi(element.timeTableRows[0].stationUICCode));
+            console.log('Määränpää: ' + etsiAsemanNimi(element.timeTableRows[element.timeTableRows.length - 1].stationUICCode));
+        }
     });
 }

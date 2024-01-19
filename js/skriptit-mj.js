@@ -29,7 +29,7 @@ const mt = {
         tiedot: null,
     },
     junat: {
-        osoite: 'https://rata.digitraffic.fi/api/v1/trains',
+        osoite: 'https://rata.digitraffic.fi/api/v1/live-trains',
         tiedot: null,
     },
 };
