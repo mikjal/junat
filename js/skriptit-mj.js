@@ -1,6 +1,7 @@
 let kartta, MQTTyhteys, debug = true;
 
-const metatiedot = {
+// metatiedot
+const mt = {
     operaattorit: {
         osoite: 'https://rata.digitraffic.fi/api/v1/metadata/operators',
         tiedot: null
@@ -93,11 +94,11 @@ function asetaMQTTkuuntelija() {
 }
 
 // käynnistetään metatietojen lataaminen
-for (let nimi in metatiedot) {
-    haeJSON(metatiedot[nimi].osoite, (virhekoodi, vastaus) => {
+for (let nimi in mt) {
+    haeJSON(mt[nimi].osoite, (virhekoodi, vastaus) => {
         if (virhekoodi) console.warn('Virhe haettaessa metatietoja: '+nimi+'\n',virhekoodi);
         else {
-            metatiedot[nimi].tiedot = vastaus;
+            mt[nimi].tiedot = vastaus;
             if (debug) console.log('Haettu metatiedot:',nimi,vastaus)
         }
     })
