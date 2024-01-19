@@ -1,4 +1,4 @@
-let kartta, MQTTyhteys, debug = true;
+let kartta, MQTTyhteys, debug = false;
 
 // metatiedot
 const mt = {
@@ -102,6 +102,25 @@ for (let nimi in mt) {
             if (debug) console.log('Haettu metatiedot:',nimi,vastaus)
         }
     })
+}
+
+function etsiAsemanNimi(uic) {
+    if (mt.liikennepaikat.tiedot) {
+        // Käydään läpi kaikki liikennepaikat ja etsitään löytyykö paikka jossa stationUICCode on sama
+        // kuin parametrina annettu uic
+        let indeksi = mt.liikennepaikat.tiedot.findIndex(alkio => { return uic == alkio.stationUICCode })
+        // Jos indeksi = -1 liikennepaikkaa ei löytynyt, jos indeksi on jotain muuta, indeksi sisältää
+        // paikan tiedoissa josta liikennepaikka löytyi
+        if (indeksi != -1) {
+            let asemanimi = mt.liikennepaikat.tiedot[indeksi].stationName;
+            // poistetaan asema-sana, jos sellainen löytyy
+            asemanimi = asemanimi.replace(' asema','');
+            // palautetaan asemanimi
+            return asemanimi;
+        }
+    }
+    // Jos metatietoja ei ole tai jos asemaa ei parametrinä annetun uic:n perusteella löytynyt, palautetaan null
+    return null
 }
 
 window.onload = () => {
