@@ -1,4 +1,31 @@
-let kartta, MQTTyhteys;
+let kartta, MQTTyhteys, debug = true;
+
+const metatiedot = {
+    operaattorit: {
+        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/operators',
+        tiedot: null
+    },
+    junatyypit: {
+        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/train-types',
+        tiedot: null
+    },
+    liikennepaikat: {
+        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/stations',
+        tiedot: null
+    },
+    syyluokat: {
+        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/cause-category-codes',
+        tiedot: null
+    },
+    syykoodit: {
+        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/detailed-cause-category-codes',
+        tiedot: null
+    },
+    kolmastaso: {
+        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/third-cause-category-codes',
+        tiedot: null
+    }
+}
 
 function luoKartta() {
     // Luodaan kartta ilman zoomausnappuloita (tulevat oletuksena ylös vasemmalle)
@@ -48,7 +75,7 @@ function asetaMQTTkuuntelija() {
 
     // Mitä tehdään kun viesti saapuu?
       MQTTyhteys.onMessageArrived = function(message) {
-        console.log(JSON.parse(message.payloadString));
+        if (debug) console.log('Saatiin paikkatieto junalle nro',JSON.parse(message.payloadString).trainNumber);
     };
 
     let maaritykset = {
@@ -65,11 +92,23 @@ function asetaMQTTkuuntelija() {
     MQTTyhteys.connect(maaritykset);
 }
 
+// käynnistetään metatietojen lataaminen
+for (let nimi in metatiedot) {
+    haeJSON(metatiedot[nimi].osoite, (virhekoodi, vastaus) => {
+        if (virhekoodi) console.warn('Virhe haettaessa metatietoja: '+nimi+'\n',virhekoodi);
+        else {
+            metatiedot[nimi].tiedot = vastaus;
+            if (debug) console.log('Haettu metatiedot:',nimi,vastaus)
+        }
+    })
+}
+
 window.onload = () => {
     luoKartta();
 
     asetaMQTTkuuntelija();
 
+    /*
     haeJSON('https://rata.digitraffic.fi/api/v1/train-locations/latest/', (virhekoodi, vastaus) => {
         // jos virhekoodi on jotain muuta kuin null, ilmoitetaan virheestä
         if (virhekoodi) console.warn('Virhe haettaessa JSON-tietoja tai tietojen käsittelyssä',virhekoodi)
@@ -86,6 +125,7 @@ window.onload = () => {
         
         }
     })
+    */
 }
 
 /*
