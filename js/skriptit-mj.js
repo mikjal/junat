@@ -102,19 +102,14 @@ class junaOlio {
     }
 }
 
-// etsii junan indeksinumeron junat-listalta, palauttaa null jos junaa ei löydy
+// etsii junan indeksinumeron junat-listalta, palauttaa -1 jos junaa ei löydy
 function etsiJunaListalta(numero) {
     
     let indeksi = junat.findIndex((juna) => {
         return juna.numero == numero;
     });
 
-    return (indeksi == -1 ) ? null : indeksi;
-
-    /*
-    if (indeksi == -1) return null 
-    else return indeksi;
-    */
+    return indeksi;
 
 }
 
@@ -122,10 +117,11 @@ function paivitaJunanPaikkatieto(paikkatieto) {
     // tarkistetaan löytyykö juna jo listalta
     let paikkaListalla = etsiJunaListalta(paikkatieto.trainNumber);
 
-    if (!paikkaListalla) { // paikkaListalla == null
+    if (paikkaListalla == -1) {
         // junaa ei löydy listalta, luodaan uusi
         let uusiJuna = new junaOlio(paikkatieto.trainNumber);
         paikkaListalla = junat.push(uusiJuna) - 1;
+        //console.log(paikkatieto.trainNumber,paikkaListalla);
     }
 
     junat[paikkaListalla].paivitaPaikkatieto(paikkatieto);
