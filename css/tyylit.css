@@ -9,3 +9,7 @@ body {
     height: 100%;
     width: 100%;
 }
+
+img.harmaa {
+    filter: grayscale(1);
+}

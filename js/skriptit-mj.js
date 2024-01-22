@@ -40,30 +40,70 @@ class junaOlio {
         this.numero = junanro;
         // paikkatieto
         this.pkt = null;
-    /*
-        this.pkt:
-        {
-            "trainNumber": 8686,
-            "departureDate": "2024-01-19",
-            "timestamp": "2024-01-19T13:52:44.000Z",
-            "location": {
-                "type": "Point",
-                "coordinates": [
-                    24.861881,
-                    60.248733
-                ]
-            },
-            "speed": 64,
-            "accuracy": 5
-        }
-    */
+        /*
+            this.pkt:
+            {
+                "trainNumber": 8686,
+                "departureDate": "2024-01-19",
+                "timestamp": "2024-01-19T13:52:44.000Z",
+                "location": {
+                    "type": "Point",
+                    "coordinates": [
+                        24.861881,
+                        60.248733
+                    ]
+                },
+                "speed": 64,
+                "accuracy": 5
+            }
+        */
 
         // aikataulu
         this.akt = null;
+    
+        /*
+            this.akt:
+            {
+                "trainNumber": 276,
+                "departureDate": "2024-01-21",
+                "operatorUICCode": 10,
+                "operatorShortCode": "vr",
+                "trainType": "PYO",
+                "trainCategory": "Long-distance",
+                "commuterLineID": "",
+                "runningCurrently": true,
+                "cancelled": false,
+                "version": 287462008896,
+                "timetableType": "REGULAR",
+                "timetableAcceptanceDate": "2023-08-17T06:37:35.000Z",
+                "timeTableRows": [
+                    ...
+                ]
+            }
+        */
+
         // karttamerkki
         this.karttamerkki = null;
     }
 
+
+    paivitaAikataulu(uusiTieto) {
+        // tarkistetaan onko vanhaa tietoa olemassa
+        if (this.akt) {
+            // vanhat aikataulutiedot on olemassa, verrataan versionumeroita
+            // jos uuden tiedon versionumero on pienempi kuin jo tallennetun
+            // uutta tietoa ei tallenneta
+            if (uusiTieto.version > this.akt.version) {
+                this.akt = uusiTieto;
+                console.log('Aikataulun päivitys',uusiTieto.trainNumber);
+            }
+        } else {
+            this.akt = uusiTieto;
+            console.log('Uusi aikataulu',uusiTieto.trainNumber);
+        }
+
+        if (this.pkt) this.piirraMerkki();
+    }
 
     paivitaPaikkatieto(uusiPaikkatieto) {
         // tarkistetaan onko vanha paikkatieto olemassa
@@ -89,6 +129,12 @@ class junaOlio {
         if (this.karttamerkki) {
             // merkki on jo olemassa, siirretään sitä
             this.karttamerkki = this.karttamerkki.setLatLng([this.pkt.location.coordinates[1],this.pkt.location.coordinates[0]]);
+
+            if (this.akt) {
+                if (this.karttamerkki._icon.classList.contains('harmaa')) {
+                    this.karttamerkki._icon.classList.remove('harmaa');
+                }
+            }
         } else {
             // merkkiä ei vielä ole kartalla, lisätään se
             this.karttamerkki = L.marker([this.pkt.location.coordinates[1],this.pkt.location.coordinates[0]])
@@ -98,6 +144,9 @@ class junaOlio {
                 // tänne tulee funktiokutsu jolla näytetään junan aikataulu
                 console.log('Klikattiin junan',this.numero,'merkkiä. Junan nopeus: ',this.pkt.speed);
             });
+
+            if (this.akt == null) this.karttamerkki._icon.classList.add('harmaa');
+
         }
     }
 }
@@ -126,6 +175,19 @@ function paivitaJunanPaikkatieto(paikkatieto) {
     }
 
     junat[indeksiTaulukossa].paivitaPaikkatieto(paikkatieto);
+}
+
+function paivitaJunanAikataulu(tieto) {
+    // tarkistetaan löytyykö juna jo taulukosta
+    let indeksiTaulukossa = etsiJunaTaulukosta(tieto.trainNumber);
+
+    if (indeksiTaulukossa == -1) {
+        // junaa ei löydy taulukosta, luodaan se
+        let uusiJuna = new junaOlio(tieto.trainNumber);
+        indeksiTaulukossa = junat.push(uusiJuna) - 1;
+    }
+
+    junat[indeksiTaulukossa].paivitaAikataulu(tieto);
 }
 
 
@@ -171,6 +233,19 @@ function haeJSON(osoite, paluufunktio) {
         });
 }
 
+function kasitteleMQTTJSON(kohdetieto,JSONtieto) {
+    // tarkistetaan onko saapunut tieto junan paikkatieto
+    // vai junan tieto (sisältäen mm. aikataulun)
+    if (kohdetieto.includes('train-locations')) {
+        // junan paikkatieto
+        paivitaJunanPaikkatieto(JSONtieto);
+    } else if (kohdetieto.includes('trains')) {
+        // tieto junasta (mm. junan tyyppi, operaattori, aikataulu)
+        //console.log('Junan nro',JSONtieto.trainNumber,'tiedot');
+        paivitaJunanAikataulu(JSONtieto);
+    }
+}
+
 function asetaMQTTkuuntelija() {
     MQTTyhteys = new Paho.MQTT.Client('rata.digitraffic.fi', 443, 'myclientid_' + parseInt(Math.random() * 10000, 10));
 
@@ -181,9 +256,7 @@ function asetaMQTTkuuntelija() {
 
     // Mitä tehdään kun viesti saapuu?
     MQTTyhteys.onMessageArrived = function (message) {
-        let paikkatieto = JSON.parse(message.payloadString);
-        if (debug) console.log('Saatiin paikkatieto junalle nro', paikkatieto.trainNumber);
-        paivitaJunanPaikkatieto(paikkatieto);
+        kasitteleMQTTJSON(message.destinationName,JSON.parse(message.payloadString));
     };
 
     let maaritykset = {
@@ -192,6 +265,8 @@ function asetaMQTTkuuntelija() {
         onSuccess: function () {
             // Yhteyden muodostuessa tilataan junien paikkatieto
             MQTTyhteys.subscribe('train-locations/#', { qos: 0 });
+            // Sekä junien tiedot
+            MQTTyhteys.subscribe('trains/#', { qos: 0 });
         },
         onFailure: function (message) {
             // Yhteyden muodostaminen epäonnituu
@@ -228,6 +303,8 @@ function etsiAsemanNimi(uic) {
             let asemanimi = mt.liikennepaikat.tiedot[indeksi].stationName;
             // poistetaan asema-sana, jos sellainen löytyy
             asemanimi = asemanimi.replace(' asema', '');
+            asemanimi = asemanimi.replace('tavara', '(tavara)');
+            asemanimi = asemanimi.replace('lajittelu', '(lajittelu)');
             // palautetaan asemanimi
             return asemanimi;
         }
