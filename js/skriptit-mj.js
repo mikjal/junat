@@ -35,11 +35,14 @@ const mt = {
     },
 };
 
+
 class junaOlio {
     constructor(junanro) {
+        // junan numero
         this.numero = junanro;
         // paikkatieto
         this.pkt = null;
+
         /*
             this.pkt:
             {
@@ -60,7 +63,7 @@ class junaOlio {
 
         // aikataulu
         this.akt = null;
-    
+
         /*
             this.akt:
             {
@@ -81,6 +84,31 @@ class junaOlio {
                 ]
             }
         */
+
+        // karttamerkki
+        this.karttamerkki = null;
+        // usein tarvittavia tietoja
+        this.tiedot = {
+            nimi: null,
+            lahtopaikka: null,
+            maaranpaa: null,
+            nopeus: null,
+            aikaero: null
+        }
+    }
+}
+
+
+/*
+class junaolio {
+    constructor(junanro) {
+        this.numero = junanro;
+        // paikkatieto
+        this.pkt = null;
+
+        // aikataulu
+        this.akt = null;
+    
 
         // karttamerkki
         this.karttamerkki = null;
@@ -150,6 +178,7 @@ class junaOlio {
         }
     }
 }
+*/
 
 // Etsii junan indeksinumeron junat-taulukosta
 // Paramterit: etsittävän junan numero
@@ -164,17 +193,59 @@ function etsiJunaTaulukosta(junanNumero) {
 
 }
 
-function paivitaJunanPaikkatieto(paikkatieto) {
+function piirraKarttamerkki(indeksi) {
+    
+    let juna = junat[indeksi];
+
+    // tarkistetaan onko merkki jo olemassa
+    if (juna.karttamerkki) {
+        // merkki on jo olemassa, siirretään sitä
+        junat[indeksi].karttamerkki = juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+
+    } else {
+        // merkkiä ei vielä ole kartalla, lisätään se
+        let uusiKarttamerkki = L.marker([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]])
+        .bindTooltip(juna.numero.toString())
+        .addTo(kartta);
+
+        uusiKarttamerkki.on('click',() => {
+        // tänne tulee funktiokutsu jolla näytetään junan aikataulu
+        console.log('Klikattiin junan',juna.numero,'merkkiä.');
+        });
+
+        junat[indeksi].karttamerkki = uusiKarttamerkki;
+    }
+        
+}
+
+function paivitaJunanPaikkatieto(uusiPaikkatieto) {
     // tarkistetaan löytyykö juna jo taulukosta
-    let indeksiTaulukossa = etsiJunaTaulukosta(paikkatieto.trainNumber);
+    let indeksiTaulukossa = etsiJunaTaulukosta(uusiPaikkatieto.trainNumber);
 
     if (indeksiTaulukossa == -1) {
         // junaa ei löydy taulukosta, luodaan se
-        let uusiJuna = new junaOlio(paikkatieto.trainNumber);
+        let uusiJuna = new junaOlio(uusiPaikkatieto.trainNumber);
         indeksiTaulukossa = junat.push(uusiJuna) - 1;
     }
 
-    junat[indeksiTaulukossa].paivitaPaikkatieto(paikkatieto);
+    //junat[indeksiTaulukossa].paivitaPaikkatieto(paikkatieto);
+    let vanhaPaikkatieto = junat[indeksiTaulukossa].pkt;
+
+    // tarkistetaan löytyykö vanha paikkatieto
+    if (vanhaPaikkatieto) {
+        // vanha paikkatieto on olemassa, verrataan aikaleimoja
+        // jos uuden paikkatiedon aikaleima on pienempi (=aiempi) kuin jo tallennetun, 
+        // uutta paikkatietoa ei tallenneta
+        if (new Date(vanhaPaikkatieto.timestamp) < new Date(uusiPaikkatieto.timestamp)) {
+                // vanhan paikkatiedon aikaleima on vanhempi kuin uuden, päivitetään paikkatieto
+                junat[indeksiTaulukossa].pkt = uusiPaikkatieto;
+        } 
+    } else {
+            // vanhaa paikkatietoa ei ole olemassa
+            junat[indeksiTaulukossa].pkt = uusiPaikkatieto;
+        }
+
+    piirraKarttamerkki(indeksiTaulukossa);
 }
 
 function paivitaJunanAikataulu(tieto) {
@@ -187,7 +258,7 @@ function paivitaJunanAikataulu(tieto) {
         indeksiTaulukossa = junat.push(uusiJuna) - 1;
     }
 
-    junat[indeksiTaulukossa].paivitaAikataulu(tieto);
+    //junat[indeksiTaulukossa].paivitaAikataulu(tieto);
 }
 
 
@@ -249,12 +320,12 @@ function kasitteleMQTTJSON(kohdetieto,JSONtieto) {
 function asetaMQTTkuuntelija() {
     MQTTyhteys = new Paho.MQTT.Client('rata.digitraffic.fi', 443, 'myclientid_' + parseInt(Math.random() * 10000, 10));
 
-    // Mitä tapahtuu jos yhteys katkeaa?
+    // Mitä tapahtuu jos yhteys katkeaa:
     MQTTyhteys.onConnectionLost = function (responseObject) {
         console.warn('MQTT-yhteys katkesi: ' + responseObject.errorMessage);
     };
 
-    // Mitä tehdään kun viesti saapuu?
+    // Mitä tehdään kun viesti saapuu:
     MQTTyhteys.onMessageArrived = function (message) {
         kasitteleMQTTJSON(message.destinationName,JSON.parse(message.payloadString));
     };
@@ -269,7 +340,7 @@ function asetaMQTTkuuntelija() {
             MQTTyhteys.subscribe('trains/#', { qos: 0 });
         },
         onFailure: function (message) {
-            // Yhteyden muodostaminen epäonnituu
+            // Yhteyden muodostaminen epäonnistui
             console.warn('MQTT-yhteyden muodostaminen epäonnistui: ' + message.errorMessage);
         },
     };
