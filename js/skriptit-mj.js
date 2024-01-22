@@ -69,7 +69,7 @@ class junaOlio {
         // tarkistetaan onko vanha paikkatieto olemassa
         if (this.pkt) { // this.pkt != null
             // vanha paikkatieto on olemassa, verrataan aikaleimoja
-            // jos uuden paikkatiedon aikaleima on aiempi kuin jo tallennetun, 
+            // jos uuden paikkatiedon aikaleima on pienempi (=aiempi) kuin jo tallennetun, 
             // uutta paikkatietoa ei tallenneta
             if (new Date(this.pkt.timestamp) < new Date(uusiPaikkatieto.timestamp)) {
                 // vanhan paikkatiedon aikaleima on vanhempi kuin uuden, päivitetään paikkatieto
@@ -90,23 +90,25 @@ class junaOlio {
             // merkki on jo olemassa, siirretään sitä
             this.karttamerkki = this.karttamerkki.setLatLng([this.pkt.location.coordinates[1],this.pkt.location.coordinates[0]]);
         } else {
-            // merkkiä ei vielä ole kartalla, "piirretään" se
+            // merkkiä ei vielä ole kartalla, lisätään se
             this.karttamerkki = L.marker([this.pkt.location.coordinates[1],this.pkt.location.coordinates[0]])
                                 .bindTooltip(this.numero.toString())
                                 .addTo(kartta);
             this.karttamerkki.on('click',() => {
                 // tänne tulee funktiokutsu jolla näytetään junan aikataulu
                 console.log('Klikattiin junan',this.numero,'merkkiä. Junan nopeus: ',this.pkt.speed);
-            })
+            });
         }
     }
 }
 
-// etsii junan indeksinumeron junat-listalta, palauttaa -1 jos junaa ei löydy
-function etsiJunaListalta(numero) {
+// Etsii junan indeksinumeron junat-taulukosta
+// Paramterit: etsittävän junan numero
+// Palauttaa: junan indeksinumeron junat-taulukossa tai -1 jos junaa ei löydy
+function etsiJunaTaulukosta(junanNumero) {
     
     let indeksi = junat.findIndex((juna) => {
-        return juna.numero == numero;
+        return juna.numero == junanNumero;
     });
 
     return indeksi;
@@ -114,17 +116,16 @@ function etsiJunaListalta(numero) {
 }
 
 function paivitaJunanPaikkatieto(paikkatieto) {
-    // tarkistetaan löytyykö juna jo listalta
-    let paikkaListalla = etsiJunaListalta(paikkatieto.trainNumber);
+    // tarkistetaan löytyykö juna jo taulukosta
+    let indeksiTaulukossa = etsiJunaTaulukosta(paikkatieto.trainNumber);
 
-    if (paikkaListalla == -1) {
-        // junaa ei löydy listalta, luodaan uusi
+    if (indeksiTaulukossa == -1) {
+        // junaa ei löydy taulukosta, luodaan se
         let uusiJuna = new junaOlio(paikkatieto.trainNumber);
-        paikkaListalla = junat.push(uusiJuna) - 1;
-        //console.log(paikkatieto.trainNumber,paikkaListalla);
+        indeksiTaulukossa = junat.push(uusiJuna) - 1;
     }
 
-    junat[paikkaListalla].paivitaPaikkatieto(paikkatieto);
+    junat[indeksiTaulukossa].paivitaPaikkatieto(paikkatieto);
 }
 
 
@@ -213,14 +214,15 @@ for (let nimi in mt) {
 }
 
 function etsiAsemanNimi(uic) {
+    // Tarkistetaan onko liikennepaikkojen metatiedot käytettävissä
     if (mt.liikennepaikat.tiedot) {
-        // Käydään läpi kaikki liikennepaikat ja etsitään löytyykö paikka jossa stationUICCode on sama
-        // kuin parametrina annettu uic
-        let indeksi = mt.liikennepaikat.tiedot.findIndex((alkio) => {
-            return uic == alkio.stationUICCode;
+        // Käydään läpi kaikki liikennepaikat ja etsitään löytyykö paikka jossa 
+        // stationUICCode on sama kuin parametrina annettu uic
+        let indeksi = mt.liikennepaikat.tiedot.findIndex((asema) => {
+            return uic == asema.stationUICCode;
         });
-        // Jos indeksi = -1 liikennepaikkaa ei löytynyt, jos indeksi on jotain muuta, indeksi sisältää
-        // paikan tiedoissa josta liikennepaikka löytyi
+        // Jos indeksi = -1 liikennepaikkaa ei löytynyt. Jos indeksi on jotain 
+        // muuta, se sisältää paikan taulukossa josta liikennepaikka löytyi
         if (indeksi != -1) {
             // asetetaan asemanimeksi stationName
             let asemanimi = mt.liikennepaikat.tiedot[indeksi].stationName;
@@ -239,40 +241,4 @@ window.onload = () => {
 
     asetaMQTTkuuntelija();
 
-    /*
-    haeJSON('https://rata.digitraffic.fi/api/v1/train-locations/latest/', (virhekoodi, vastaus) => {
-        // jos virhekoodi on jotain muuta kuin null, ilmoitetaan virheestä
-        if (virhekoodi) console.warn('Virhe haettaessa JSON-tietoja tai tietojen käsittelyssä',virhekoodi)
-        else { // virhekoodi on null eli virheitä ei ole tapahtunut, vastaus sisältää JSON-tiedot
-           
-            // esim. ensimmäisenä junan tiedot
-            //console.log(vastaus[0]);
-
-            // ensimmäisen junan numero
-            //console.log(vastaus[0].trainNumber);
-
-            // ensimmäisen junan lähtöpäivä
-            //console.log(vastaus[0].departureDate);
-        
-        }
-    })
-    */
 };
-
-/*
-yhden junan tiedot, esim. vastaus[0]
-{
-    "trainNumber": 1,
-    "departureDate": "2024-01-16",
-    "timestamp": "2024-01-16T09:53:17.000Z",
-    "location": {
-        "type": "Point",
-        "coordinates": [
-            29.777991,
-            62.601035
-        ]
-    },
-    "speed": 0,
-    "accuracy": 24
-}
-*/
