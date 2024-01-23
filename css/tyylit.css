@@ -17,6 +17,10 @@ img.harmaa {
 
 
 .pvmAika {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    z-index: 1000;
     font-size: 16px;
     padding: 24px;
     color: #ffffff;

@@ -86,9 +86,13 @@ function piirraKarttamerkki(indeksi) {
                 juna.karttamerkki._icon.classList.remove('harmaa');
             }
 
-            if (juna.tiedot.lahtopaikka && juna.tiedot.maaranpaa && juna.tiedot.operaattori && juna.tiedot.nopeus) {
-                juna.karttamerkki.setTooltipContent(juna.numero.toString()+'<br>'+juna.tiedot.lahtopaikka+' - '+juna.tiedot.maaranpaa+'<br>'+juna.tiedot.operaattori+'<br>Nopeus: '+juna.tiedot.nopeus+' km/h');
-            }
+            let tooltipTeksti = juna.numero.toString();
+            tooltipTeksti += (juna.tiedot.lahtopaikka && juna.tiedot.maaranpaa) ? '<br>' + juna.tiedot.lahtopaikka + ' - ' + juna.tiedot.maaranpaa : '';
+            tooltipTeksti += (juna.tiedot.operaattori) ? '<br>' + juna.tiedot.operaattori : '';
+            tooltipTeksti += (juna.tiedot.nopeus != null) ? '<br>Nopeus: ' + juna.tiedot.nopeus + ' km/h' : '';
+            tooltipTeksti += (juna.pkt) ? '<br>Päivitetty '+(new Date(juna.pkt.timestamp)).toLocaleTimeString() : '';
+
+            juna.karttamerkki.setTooltipContent(tooltipTeksti);
         }
 
     } else {
