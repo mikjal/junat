@@ -35,9 +35,14 @@ function tietojenHaku(indeksi) {
                 element.tiedot.operaattori = operaattori.operatorName;
             }
         });
+        element.tiedot.nimi = element.akt.trainType;
         nimiParit.map(([key, val] = entry) => {
             if (element.akt.trainType == key) {
-                element.tiedot.nimi = val;
+                if (val == 'Lähijuna') {
+                    element.tiedot.nimi = val + ' ' + element.akt.commuterLineID;
+                } else {
+                    element.tiedot.nimi = val + ' ' + element.numero;
+                }
             }
         });
     }
