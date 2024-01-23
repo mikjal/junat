@@ -15,12 +15,17 @@ img.harmaa {
     filter: grayscale(1);
 }
 
+.leaflet-tooltip {
+    font-family: "Inter", sans-serif;
+    font-size: 1.1em;
+}
+
 
 .pvmAika {
     position: fixed;
     left: 10px;
     top: 10px;
-    z-index: 1000;
+    z-index: 1100;
     font-size: 16px;
     padding: 24px;
     color: #ffffff;
