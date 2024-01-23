@@ -86,7 +86,9 @@ function piirraKarttamerkki(indeksi) {
                 juna.karttamerkki._icon.classList.remove('harmaa');
             }
 
-            juna.karttamerkki.setTooltipContent(juna.numero.toString()+'<br>'+juna.tiedot.lahtopaikka+' - '+juna.tiedot.maaranpaa);
+            if (juna.tiedot.lahtopaikka && juna.tiedot.maaranpaa && juna.tiedot.operaattori) {
+                juna.karttamerkki.setTooltipContent(juna.numero.toString()+'<br>'+juna.tiedot.lahtopaikka+' - '+juna.tiedot.maaranpaa+'<br>'+juna.tiedot.operaattori);
+            }
         }
 
     } else {
