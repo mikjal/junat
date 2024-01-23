@@ -80,10 +80,13 @@ function piirraKarttamerkki(indeksi) {
         // merkki on jo olemassa, siirretään sitä
         juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
 
+
         if (juna.akt) {
             if (juna.karttamerkki._icon.classList.contains('harmaa')) {
                 juna.karttamerkki._icon.classList.remove('harmaa');
             }
+
+            juna.karttamerkki.setTooltipContent(juna.numero.toString()+'<br>'+juna.tiedot.lahtopaikka+' - '+juna.tiedot.maaranpaa);
         }
 
     } else {
@@ -157,14 +160,14 @@ function paivitaJunanTiedot(onkoPaikkatieto, JSONtieto) {
                     // uuden tiedon versionumero on pienempi kuin jo tallennerun, poistutaan funktiosta
                     return
                 }
+                juna.akt = JSONtieto;
             } else {
                 // vanhoja tietoja ei löydy
                 // kutsutaan funktiota joka luo junalle perustiedot
-                //funktio(junanIndeksi);
+                juna.akt = JSONtieto;
+                tietojenHaku(junanIndeksi);
             }
             
-            juna.akt = JSONtieto;
-
             // piirretään karttamerkki
             piirraKarttamerkki(junanIndeksi);
 
