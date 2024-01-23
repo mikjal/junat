@@ -47,8 +47,5 @@
 		selainVersio = selainVersio.substring(0, ix); 
 	
 	
-	document.write(''
-		+ 'Selaimen nimi = ' + selainNimi + '<br>'
-		+ 'Koko versio = ' + selainVersio + '<br>'
-	); 
+	
 
