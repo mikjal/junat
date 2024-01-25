@@ -59,3 +59,19 @@ function tietojenHaku(indeksi) {
         });
     }
 }
+
+function aikatauluTarkistus(indeksi) {
+    // Tallennetaan junat olio muuttujaan
+    let element = junat[indeksi];
+    // Tehdään muuttuja
+    let aikaero = undefined;
+    // Käydään aikataulu läpi ja jos juna on saapunut asemalle tallennetaan tieto siitä onko juna myöhässä (luku positiivinen)
+    // vai etuajassa (luku negatiivinen) tieto aina ylikirjoitetaan samaan muuttujaan, joten viimeinen arvo
+    // jää muuttujan arvoksi ja se asetetaan junat olioon.
+    element.akt.timeTableRows.forEach((asema) => {
+        if (asema.actualTime !== undefined) {
+            aikaero = asema.differenceInMinutes;
+        }
+    });
+    element.tiedot.aikaero = aikaero;
+}
