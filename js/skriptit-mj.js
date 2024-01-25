@@ -81,7 +81,7 @@ function piirraKarttamerkki(indeksi) {
         juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
 
 
-        if (juna.akt) {
+        if (juna.akt && juna.tiedot.nimi) {
             if (juna.karttamerkki._icon.classList.contains('harmaa')) {
                 juna.karttamerkki._icon.classList.remove('harmaa');
             }
@@ -113,7 +113,7 @@ function piirraKarttamerkki(indeksi) {
         }
     }
 
-    if (juna.akt == null) juna.karttamerkki._icon.classList.add('harmaa');
+    if (juna.akt == null && juna.tiedot.nimi == null) juna.karttamerkki._icon.classList.add('harmaa');
         
 }
 
@@ -139,9 +139,9 @@ function paivitaJunanTiedot(onkoPaikkatieto, JSONtieto) {
             // tarkistetaan löytyykä vanha paikkatieto
             if (juna.pkt) { // juna.pkt != null
                 // löytyy vanha paikkatieto, verrataan tietojen aikaleimoja:
-                // jos uuden paikkatiedon aikaleima on pienempi (= vanhempi)
+                // jos uuden paikkatiedon aikaleima on pienempi (= vanhempi) tai yhtäsuuri
                 // kuin jo tallennetun, niin paikkatietoa ei tarvitse tallentaa
-                if (new Date(JSONtieto.timestamp) < new Date(juna.pkt.timestamp)) {
+                if (new Date(JSONtieto.timestamp) <= new Date(juna.pkt.timestamp)) {
                     // uusi paikkatieto on vanhempi kuin jo tallennettu, poistutaan funktiosta
                     return
                 }
@@ -162,7 +162,7 @@ function paivitaJunanTiedot(onkoPaikkatieto, JSONtieto) {
                 // löytyy vanha tieto, verrataan versionumeroa:
                 // jos uuden tiedon versionumero on pienempi kuin vanhan
                 // uutta tietoa ei tallenneta
-                if (JSONtieto.version < juna.akt.version) {
+                if (JSONtieto.version <= juna.akt.version) {
                     // uuden tiedon versionumero on pienempi kuin jo tallennerun, poistutaan funktiosta
                     return
                 }
@@ -235,17 +235,6 @@ function kasitteleMQTTJSON(kohdetieto,JSONtieto) {
 
     // jos onkoPaikkatieto on jotain muuta kuin null, päivitetään junan tiedot
     if (onkoPaikkatieto != null) paivitaJunanTiedot(onkoPaikkatieto, JSONtieto);
-
-    /*
-    if (kohdetieto.includes('train-locations')) {
-        // junan paikkatieto
-        paivitaJunanPaikkatieto(JSONtieto);
-    } else if (kohdetieto.includes('trains')) {
-        // tieto junasta (mm. junan tyyppi, operaattori, aikataulu)
-        //console.log('Junan nro',JSONtieto.trainNumber,'tiedot');
-        paivitaJunanAikataulu(JSONtieto);
-    }
-    */
 }
 
 function asetaMQTTkuuntelija() {
@@ -305,8 +294,8 @@ function etsiAsemanNimi(uic) {
             let asemanimi = mt.liikennepaikat.tiedot[indeksi].stationName;
             // poistetaan asema-sana, jos sellainen löytyy
             asemanimi = asemanimi.replace(' asema', '');
-            asemanimi = asemanimi.replace('tavara', '(tavara)');
-            asemanimi = asemanimi.replace('lajittelu', '(lajittelu)');
+            //asemanimi = asemanimi.replace('tavara', '(tavara)');
+            //asemanimi = asemanimi.replace('lajittelu', '(lajittelu)');
             // palautetaan asemanimi
             return asemanimi;
         }
