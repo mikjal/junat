@@ -25,6 +25,7 @@ function tietojenHaku(indeksi) {
         VET: 'Veturijuna',
         VEV: 'Veturijuna',
         VLI: 'Lisäveturi (vaihtotyö veturina)',
+        W: 'Vaihtotyö',
     };
     let nimiParit = Object.entries(junatyypit);
     if (element.akt != null) {
@@ -35,7 +36,7 @@ function tietojenHaku(indeksi) {
                 element.tiedot.operaattori = operaattori.operatorName;
             }
         });
-        element.tiedot.nimi = element.akt.trainType;
+        element.tiedot.nimi = element.akt.trainType + element.numero;
         nimiParit.map(([key, val] = entry) => {
             if (element.akt.trainType == key) {
                 if (val == 'Lähijuna') {
