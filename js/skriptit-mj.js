@@ -221,7 +221,6 @@ function poistaJuna(junanNumero) {
 
     if (indeksi != -1) {
 
-/* 
         let poista = true,
         juna = junat[indeksi];
         let nyt = new Date();
@@ -234,22 +233,29 @@ function poistaJuna(junanNumero) {
             if (perilla) { // perilla = perilläoloaika
                 let perillaAika = new Date(perilla);
                 // onko juna ollut perillä alle 5 minuuttia?
-                if (nyt - perillaAika < 1000*60*5) poista = false;
+                if (nyt - perillaAika < 1000*60*5) {
+                    poista = false;
+                    console.log('Perillä alle 5 min: ',juna.numero);
+                } else {
+                    console.log('Perillä yli 5 minuuttia, poistetaan: ',juna.numero)
+                }
+                //console.log(perillaAika.toLocaleTimeString(),nyt-perillaAika);
             } else { // perilla = null, juna on siis matkalla
                 poista = false;
+                console.log('Matkalla, ei poisteta:',juna.numero)
             }
+        } else {
+            console.log('Ei aikataulutietoja, poistetaan:',juna.numero);
         }
-
+/*
         // jos junaa ollaan vielä poistamassa ja junalla on paikkatieto, 
         // tarkistetaan onko paikkatiedoissa jotain joka estää merkin poiston
         if (poista && juna.pkt) {
             let edellinenPaivitysaika = new Date(juna.pkt.timestamp);
             if (nyt - edellinenPaivitysaika < 1000*60) poista = false;
         }
-
-*/        
-        let poista = false;
-
+*/
+/*
         if (junat[indeksi].pkt) {
             let edellinenPaivitysaika = new Date(junat[indeksi].pkt.timestamp);
             let nyt = new Date();
@@ -257,7 +263,7 @@ function poistaJuna(junanNumero) {
             if (nyt-edellinenPaivitysaika > 60000) poista = true;
             
         } else poista = true;
-
+*/
         if (poista) {
             //console.log('Poistetaan juna:',juna.numero);
             poistaKarttamerkki(indeksi);
@@ -316,7 +322,7 @@ function ajastettuPaivitys() {
                 haeJSON('https://rata.digitraffic.fi/api/v1/trains/latest/'+paivitysjono[i], (virhekoodi, vastaus) => {
                     if (virhekoodi) console.warn('Virhe haettaessa junan',paivitysjono[i],'tietoja!\n', virhekoodi);
                     else {
-                        if (vastaus) paivitaJunanTiedot(vastaus[0]);
+                        if (vastaus.length > 0) paivitaJunanTiedot(vastaus[0]);
                     } 
                 });
             } // if
