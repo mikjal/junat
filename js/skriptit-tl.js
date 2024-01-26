@@ -1,4 +1,4 @@
-function piirraKarttamerkki(indeksi) {
+/* function piirraKarttamerkki(indeksi) {
     
   let juna = junat[indeksi];
 
@@ -47,7 +47,7 @@ function piirraKarttamerkki(indeksi) {
   if (juna.akt == null && juna.tiedot.nimi == null) {
     juna.karttamerkki._icon.classList.add('harmaa');
   }
-}
+} */
 
 const aikaElement = document.querySelector(".aika");
 const pvmElement = document.querySelector(".paivam");
