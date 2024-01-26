@@ -100,6 +100,7 @@ function piirraKarttamerkki(indeksi) {
                 tooltipTeksti += (juna.tiedot.aikaero < 0) ? '<br>'+Math.abs(juna.tiedot.aikaero)+' minuuttia etuajassa' : (juna.tiedot.aikaero == 0) ? '<br>Aikataulussa' : '<br>'+juna.tiedot.aikaero+' minuuttia myöhässä';
             }
             tooltipTeksti += (juna.tiedot.nopeus != null) ? '<br>Nopeus: ' + juna.tiedot.nopeus + ' km/h' : '';
+            tooltipTeksti += (juna.pkt.accuracy) ? '<br>Merkin tarkkuus: ' + juna.pkt.accuracy + ' m' : '';
             tooltipTeksti += (juna.pkt) ? '<br>Päivitetty '+(new Date(juna.pkt.timestamp)).toLocaleTimeString() : '';
 
             juna.karttamerkki.setTooltipContent(tooltipTeksti);
