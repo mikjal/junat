@@ -87,3 +87,51 @@ function onkoPerilla(indeksi) {
         return null;
     }
 }
+
+function seuraavaAsema(indeksi) {
+    // Tallennetaan junat olio muuttujaan
+    let element = junat[indeksi];
+    let teksti = '';
+    if (element.akt != null) {
+        element.akt.timeTableRows.forEach((asema, index) => {
+            if (element.akt.timeTableRows[0].actualTime == undefined) {
+                if (element.akt.timeTableRows[1].trainStopping == false) {
+                    teksti =
+                        'Seuraavana ohittaa aseman: ' +
+                        etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
+                        ' Lähtee kello ' +
+                        new Date(asema.scheduledTime).toLocaleTimeString();
+                } else {
+                    teksti =
+                        'Seuraavana: ' +
+                        etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
+                        ' Lähtee kello ' +
+                        new Date(asema.scheduledTime).toLocaleTimeString();
+                }
+            }
+            if (asema.actualTime !== undefined) {
+                if (index == element.akt.timeTableRows.length) {
+                    teksti =
+                        'Pääteasema: ' +
+                        etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode) +
+                        ' Kello ' +
+                        new Date(element.akt.timeTableRows[index].actualTime).toLocaleTimeString();
+                } else if (element.akt.timeTableRows[index + 1].trainStopping == false) {
+                    teksti =
+                        'Seuraavana ohittaa aseman: ' +
+                        etsiAsemanNimi(element.akt.timeTableRows[index + 1].stationUICCode) +
+                        ' Kello ' +
+                        new Date(element.akt.timeTableRows[index + 1].scheduledTime).toLocaleTimeString();
+                } else {
+                    teksti =
+                        'Seuraavana: ' +
+                        etsiAsemanNimi(element.akt.timeTableRows[index + 1].stationUICCode) +
+                        ' Kello ' +
+                        new Date(element.akt.timeTableRows[index + 1].scheduledTime).toLocaleTimeString();
+                }
+            }
+        });
+        // console.log(teksti);
+        return teksti;
+    }
+}
