@@ -75,3 +75,15 @@ function aikatauluTarkistus(indeksi) {
     });
     element.tiedot.aikaero = aikaero;
 }
+
+function onkoPerilla(indeksi) {
+    // Tallennetaan junat olio muuttujaan
+    let element = junat[indeksi];
+    // Katsotaan onko aikatauluissa oleva viimeinen asema saanut saapumisaikaa ja jos on niin palautetaan
+    // se ja jos ei niin palautetaan null.
+    if (element.akt.timeTableRows[element.akt.timeTableRows.length - 1].actualTime !== undefined) {
+        return element.akt.timeTableRows[element.akt.timeTableRows.length - 1].actualTime;
+    } else {
+        return null;
+    }
+}
