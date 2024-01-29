@@ -82,7 +82,10 @@ function paikannaJuna(junanNumero) {
     let indeksi = etsiJunaTaulukosta(junanNumero);
     if (indeksi != -1) {
         let juna = junat[indeksi];
-        if (juna.pkt) kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+        console.log('Junan indeksi:',indeksi);
+        console.log(junat[indeksi]);
+        if (juna.pkt) kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],12);
+
     }
 }
 
