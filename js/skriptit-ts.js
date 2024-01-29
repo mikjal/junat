@@ -96,23 +96,38 @@ function seuraavaAsema(indeksi) {
     if (element.akt != null) {
         element.akt.timeTableRows.forEach((asema, index) => {
             if (element.akt.timeTableRows[0].actualTime == undefined) {
-                if (element.akt.timeTableRows[1].trainStopping != undefined) {
-                    if (element.akt.timeTableRows[1].trainStopping == false) {
-                        if (element.akt.timeTableRows[1].liveEstimateTime != undefined) {
-                            aika = new Date(element.akt.timeTableRows[1].liveEstimateTime).toLocaleTimeString();
-                        } else {
-                            aika = new Date(element.akt.timeTableRows[1].scheduledTime).toLocaleTimeString();
-                        }
-                        teksti = 'Seuraavana ohittaa aseman ' + etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) + ' (' + aika + ')';
-                    } else {
-                        if (element.akt.timeTableRows[1].liveEstimateTime != undefined) {
-                            aika = new Date(element.akt.timeTableRows[1].liveEstimateTime).toLocaleTimeString();
-                        } else {
-                            aika = new Date(element.akt.timeTableRows[1].scheduledTime).toLocaleTimeString();
-                        }
-                        teksti = 'Seuraavana ' + etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) + ' (' + aika + ')';
-                    }
-                }
+                teksti = 'Lähtee klo (' + new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString() + ')';
+                // if (element.akt.timeTableRows[1].trainStopping != undefined) {
+                //     if (element.akt.timeTableRows[1].trainStopping == false) {
+                //         if (element.akt.timeTableRows[1].liveEstimateTime != undefined) {
+                //             aika = new Date(element.akt.timeTableRows[1].liveEstimateTime).toLocaleTimeString();
+                //         } else {
+                //             aika = new Date(element.akt.timeTableRows[1].scheduledTime).toLocaleTimeString();
+                //         }
+                //         teksti =
+                //             'Seuraavana ohittaa aseman ' +
+                //             etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
+                //             ' (' +
+                //             aika +
+                //             ') Lähtee klo (' +
+                //             new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString() +
+                //             ')';
+                //     } else {
+                //         if (element.akt.timeTableRows[1].liveEstimateTime != undefined) {
+                //             aika = new Date(element.akt.timeTableRows[1].liveEstimateTime).toLocaleTimeString();
+                //         } else {
+                //             aika = new Date(element.akt.timeTableRows[1].scheduledTime).toLocaleTimeString();
+                //         }
+                //         teksti =
+                //             'Seuraavana ' +
+                //             etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
+                //             ' (' +
+                //             aika +
+                //             ') Lähtee klo (' +
+                //             new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString() +
+                //             ')';
+                //     }
+                // }
             }
             if (asema.actualTime !== undefined) {
                 if (index == element.akt.timeTableRows.length) {
