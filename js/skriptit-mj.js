@@ -6,7 +6,8 @@ let kartta,
     pysaytaPaivitys = false,
     valittuJuna = -1,
     paivitysLaskuri = 0,
-    seuraaMerkkia = true;
+    seuraaMerkkia = true,
+    piirraTarkkuus = true;
 
 // metatiedot
 const mt = {
@@ -111,6 +112,18 @@ function paivitaKarttamerkki(indeksi) {
     if (juna.piirraMerkki) {
         // tarkistetaan onko merkki jo olemassa
         if (juna.karttamerkki) {
+            // tarkkuusympyrä?
+            if (juna.tarkkuusympyra) {
+                juna.tarkkuusympyra.removeFrom(kartta);
+                if (piirraTarkkuus) {
+                    juna.tarkkuusympyra = L.circle([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]], {
+                        radius: juna.pkt.accuracy,
+                        opacity: 0.2,
+                        fillOpacity: 0.2
+                    }).addTo(kartta);
+                }
+            }
+            
             // merkki on jo olemassa, siirretään sitä
             juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
 
@@ -122,6 +135,16 @@ function paivitaKarttamerkki(indeksi) {
             // merkkiä ei vielä ole kartalla, lisätään se
             // varmistetaan ensin että paikkatieto on olemassa
             if (juna.pkt) {
+    
+                // onko junalla tarkkuustieto ja onko tarkkuusympyrän piirto sallittu
+                if (juna.pkt.accuracy && piirraTarkkuus) {
+                    juna.tarkkuusympyra = L.circle([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]], {
+                        radius: juna.pkt.accuracy,
+                        opacity: 0.2,
+                        fillOpacity: 0.2
+                    }).addTo(kartta);
+                }
+
                 let uusiKarttamerkki = L.marker([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]])
                 .bindTooltip(juna.numero.toString())
                 .addTo(kartta);
@@ -133,6 +156,7 @@ function paivitaKarttamerkki(indeksi) {
                 }
                 // karttamerkin sijoitus junaan
                 juna.karttamerkki = uusiKarttamerkki;
+
         
             }
         } 
@@ -207,6 +231,11 @@ function poistaKarttamerkki(indeksi) {
     if (junat[indeksi].karttamerkki) {
         junat[indeksi].karttamerkki.removeFrom(kartta);
         junat[indeksi].karttamerkki = null;
+    }
+    // jos junalla on tarkkuusympyrä, poistetaan sekin
+    if (junat[indeksi].tarkkuusympyra) {
+        junat[indeksi].tarkkuusympyra.removeFrom(kartta);
+        junat[indeksi].tarkkuusympyra = null;
     }
 }
 
