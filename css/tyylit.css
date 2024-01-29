@@ -16,6 +16,11 @@ img.harmaa {
     cursor: grab;
 }
 
+img.punainen {
+  filter: hue-rotate(140deg);
+
+}
+
 .leaflet-tooltip {
     font-family: "Inter", sans-serif;
     font-size: 1.1em;
