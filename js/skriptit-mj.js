@@ -134,7 +134,8 @@ function paivitaKarttamerkki(indeksi) {
         if (juna.tiedot.nimi) {
             let tooltipTeksti = (juna.tiedot.nimi) ? '<strong>'+juna.tiedot.nimi+'</strong>' : juna.numero.toString();
             tooltipTeksti += (juna.tiedot.lahtopaikka && juna.tiedot.maaranpaa) ? '<br>' + juna.tiedot.lahtopaikka + ' - ' + juna.tiedot.maaranpaa : '';
-            tooltipTeksti += (juna.tiedot.operaattori) ? '<br>' + juna.tiedot.operaattori : '';
+            //tooltipTeksti += (juna.tiedot.operaattori) ? '<br>' + juna.tiedot.operaattori : '';
+            tooltipTeksti += seuraavaAsema(indeksi);
             if (juna.tiedot.aikaero != null) {
                 tooltipTeksti +=    (juna.tiedot.aikaero < -1) ? '<br>'+Math.abs(juna.tiedot.aikaero)+' minuuttia etuajassa' : 
                                     (juna.tiedot.aikaero == -1) ? '<br>Minuutin etuajassa' : 
