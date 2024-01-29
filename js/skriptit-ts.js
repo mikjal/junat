@@ -121,7 +121,7 @@ function seuraavaAsema(indeksi) {
                         ' Kello (' +
                         new Date(element.akt.timeTableRows[index].actualTime).toLocaleTimeString() +
                         ')';
-                } else if (element.akt.timeTableRows[index + 1].trainStopping != undefined) {
+                } else if (element.akt.timeTableRows[index + 1]) {
                     if (element.akt.timeTableRows[index + 1].trainStopping == false) {
                         teksti =
                             'Seuraavana ohittaa aseman: ' +
