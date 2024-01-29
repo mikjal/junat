@@ -98,16 +98,16 @@ function seuraavaAsema(indeksi) {
                 if (element.akt.timeTableRows[1].trainStopping != undefined) {
                     if (element.akt.timeTableRows[1].trainStopping == false) {
                         teksti =
-                            'Seuraavana ohittaa aseman: ' +
+                            'Seuraavana ohittaa aseman ' +
                             etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
-                            ' Lähtee kello (' +
+                            ' (' +
                             new Date(asema.scheduledTime).toLocaleTimeString() +
                             ')';
                     } else {
                         teksti =
-                            'Seuraavana: ' +
+                            'Seuraavana ' +
                             etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
-                            ' Lähtee kello (' +
+                            ' (' +
                             new Date(asema.scheduledTime).toLocaleTimeString() +
                             ')';
                     }
@@ -116,24 +116,24 @@ function seuraavaAsema(indeksi) {
             if (asema.actualTime !== undefined) {
                 if (index == element.akt.timeTableRows.length) {
                     teksti =
-                        'Pääteasema: ' +
+                        'Pääteasema ' +
                         etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode) +
-                        ' Kello (' +
+                        ' (' +
                         new Date(element.akt.timeTableRows[index].actualTime).toLocaleTimeString() +
                         ')';
                 } else if (element.akt.timeTableRows[index + 1]) {
                     if (element.akt.timeTableRows[index + 1].trainStopping == false) {
                         teksti =
-                            'Seuraavana ohittaa aseman: ' +
+                            'Seuraavana ohittaa aseman ' +
                             etsiAsemanNimi(element.akt.timeTableRows[index + 1].stationUICCode) +
-                            ' Kello (' +
+                            ' (' +
                             new Date(element.akt.timeTableRows[index + 1].scheduledTime).toLocaleTimeString() +
                             ')';
                     } else {
                         teksti =
-                            'Seuraavana: ' +
+                            'Seuraavana ' +
                             etsiAsemanNimi(element.akt.timeTableRows[index + 1].stationUICCode) +
-                            ' Kello (' +
+                            ' (' +
                             new Date(element.akt.timeTableRows[index + 1].scheduledTime).toLocaleTimeString() +
                             ')';
                     }
