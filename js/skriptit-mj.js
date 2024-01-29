@@ -62,6 +62,16 @@ class junaPohja {
             aikaero: null,
             operaattori: null
         }
+        // milloin olio on luotu
+        this.luotu = new Date();
+        // milloin viimeisin päivitys tietoihin
+        this.paivitettyViimeksi = null;
+        // lasketaan montako kertaa sama paikkatieto tulee peräkkäin
+        this.paikkatietolaskuri = 0;
+        // piirretäänkö karttamerkki vai ei
+        this.piirraMerkki = true;
+        // voiko karttamerkin valita kartalta (klikkaus/kosketus)
+        this.merkkiValittavissa = false;
     }
 }
 
@@ -78,63 +88,86 @@ function etsiJunaTaulukosta(junanNumero) {
 
 }
 
-function piirraKarttamerkki(indeksi) {
+function paivitaKarttamerkki(indeksi) {
     
     // heataan viittaus junaan
     let juna = junat[indeksi];
 
-    // tarkistetaan onko merkki jo olemassa
-    if (juna.karttamerkki) {
-        // merkki on jo olemassa, siirretään sitä
-        juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+    // saako karttamerkin piirtaa kartalle
+    if (juna.piirraMerkki) {
+        // tarkistetaan onko merkki jo olemassa
+        if (juna.karttamerkki) {
+            // merkki on jo olemassa, siirretään sitä
+            juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
 
-        if (juna.akt && juna.tiedot.nimi) {
-            if (juna.karttamerkki._icon.classList.contains('harmaa')) {
-                juna.karttamerkki._icon.classList.remove('harmaa');
+        } else {
+            // merkkiä ei vielä ole kartalla, lisätään se
+            // varmistetaan ensin että paikkatieto on olemassa
+            if (juna.pkt) {
+                let uusiKarttamerkki = L.marker([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]])
+                .bindTooltip(juna.numero.toString())
+                .addTo(kartta);
+        
+                // jos junalla ei ole aikataulutietoja, muutetaan sen harmaaksi
+                if (juna.akt == null) {
+                    uusiKarttamerkki._icon.classList.add('harmaa');
+                    juna.merkkiValittavissa = false;
+                }
+                // karttamerkin sijoitus junaan
+                juna.karttamerkki = uusiKarttamerkki;
+        
             }
+        } 
+    } else { // jos junalla on merkki kartalla, poistetaan se
+        if (juna.karttamerkki) poistaKarttamerkki(indeksi);
+    }// if juna.piirramerkki
 
+    // jos junan merkin saa piirtää ja junalla on aikataulu, paikkatieto sekä karttamerkki
+    if (juna.piirraMerkki && juna.akt && juna.pkt && juna.karttamerkki) {
+        
+        // jos merkki on harmaan, poistetaan sen määrittelevä luokka
+        if (juna.karttamerkki._icon.classList.contains('harmaa')) {
+            juna.karttamerkki._icon.classList.remove('harmaa');
+        }
+
+        // muodostetaan tooltip
+        if (juna.tiedot.nimi) {
             let tooltipTeksti = (juna.tiedot.nimi) ? '<strong>'+juna.tiedot.nimi+'</strong>' : juna.numero.toString();
             tooltipTeksti += (juna.tiedot.lahtopaikka && juna.tiedot.maaranpaa) ? '<br>' + juna.tiedot.lahtopaikka + ' - ' + juna.tiedot.maaranpaa : '';
             tooltipTeksti += (juna.tiedot.operaattori) ? '<br>' + juna.tiedot.operaattori : '';
             if (juna.tiedot.aikaero != null) {
-                tooltipTeksti += (juna.tiedot.aikaero < 0) ? '<br>'+Math.abs(juna.tiedot.aikaero)+' minuuttia etuajassa' : (juna.tiedot.aikaero == 0) ? '<br>Aikataulussa' : '<br>'+juna.tiedot.aikaero+' minuuttia myöhässä';
+                tooltipTeksti +=    (juna.tiedot.aikaero < -1) ? '<br>'+Math.abs(juna.tiedot.aikaero)+' minuuttia etuajassa' : 
+                                    (juna.tiedot.aikaero == -1) ? '<br>Minuutin etuajassa' : 
+                                    (juna.tiedot.aikaero == 0) ? '<br>Aikataulussa' : 
+                                    (juna.tiedot.aikaero == 1) ? '<br>Minuutin myöhässä' : '<br>'+juna.tiedot.aikaero+' minuuttia myöhässä';
             }
             tooltipTeksti += (juna.tiedot.nopeus != null) ? '<br>Nopeus: ' + juna.tiedot.nopeus + ' km/h' : '';
             tooltipTeksti += (juna.pkt.accuracy) ? '<br>Merkin tarkkuus: ' + juna.pkt.accuracy + ' m' : '';
-            tooltipTeksti += (juna.pkt) ? '<br>Päivitetty '+(new Date(juna.pkt.timestamp)).toLocaleTimeString() : '';
+            tooltipTeksti += (juna.pkt) ? '<br><small>Päivitetty '+(new Date(juna.pkt.timestamp)).toLocaleTimeString()+'</small>' : '';
 
             juna.karttamerkki.setTooltipContent(tooltipTeksti);
         }
-
-    } else {
-        // merkkiä ei vielä ole kartalla, lisätään se
-        // varmistetaan ensin että paikkatieto on olemassa
-        if (juna.pkt) {
-            let uusiKarttamerkki = L.marker([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]])
-            .bindTooltip(juna.numero.toString())
-            .addTo(kartta);
     
-            uusiKarttamerkki.on('click',() => {
-            // tänne tulee funktiokutsu jolla näytetään junan aikataulu
-            console.log('Klikattiin junan',juna.numero,'merkkiä.');
-            console.log(juna);
-            sivuPaneeli(juna.numero);
-            });
-    
-            juna.karttamerkki = uusiKarttamerkki;
-    
+        // jos junan tiedoissa on että juna ei ole valittavissa, muutetaan se
+        if (!juna.merkkiValittavissa) {
+            juna.merkkiValittavissa = true;
+            juna.karttamerkki.on('click',() => {
+                // tänne tulee funktiokutsu jolla näytetään junan aikataulu
+                console.log('Klikattiin junan',juna.numero,'merkkiä.');
+                console.log(juna);
+                sivuPaneeli(juna.numero);
+                });
         }
-    }
-
-    if (juna.akt == null && juna.tiedot.nimi == null) {
-        juna.karttamerkki._icon.classList.add('harmaa');
     }
         
 }
 
 function poistaKarttamerkki(indeksi) {
-    // jos junalle on tallennettu karttamerkki, poistetaan se kartalta
-    if (junat[indeksi].karttamerkki) junat[indeksi].karttamerkki.removeFrom(kartta);
+    // jos junalle on tallennettu karttamerkki, poistetaan se kartalta ja merkataan merkki nulliksi junan tietoihin
+    if (junat[indeksi].karttamerkki) {
+        junat[indeksi].karttamerkki.removeFrom(kartta);
+        junat[indeksi].karttamerkki = null;
+    }
 }
 
 function paivitaJunanTiedot(JSONtieto) {
@@ -157,39 +190,32 @@ function paivitaJunanTiedot(JSONtieto) {
 
         // onko kysessä paikkatieto (paikkatieto sisältää timestampin)?
         if (JSONtieto.hasOwnProperty('timestamp')) {
-            // käsitellään paikkatieto
-            // tarkistetaan löytyykä vanha paikkatieto
+            // kyseessä on paikkatieto: tarkistetaan löytyykä vanha paikkatieto
             if (juna.pkt) { // juna.pkt != null
                 // löytyy vanha paikkatieto, verrataan tietojen aikaleimoja:
-                // jos uuden paikkatiedon aikaleima on pienempi (= vanhempi) tai yhtäsuuri
-                // kuin jo tallennetun, niin paikkatietoa ei tarvitse tallentaa
-                if (new Date(JSONtieto.timestamp) <= new Date(juna.pkt.timestamp)) {
+                if (new Date(JSONtieto.timestamp) < new Date(juna.pkt.timestamp)) {
                     // uusi paikkatieto on vanhempi kuin jo tallennettu, poistutaan funktiosta
                     return
                 }
             }
-            // vanhaa paikkatietoa ei ole tai se on vanhempi kuin uusi tieto
-            // tallennetaan uusi paikkatieto
+
+            // vanhaa paikkatietoa ei ole tai se on vanhempi kuin uusi tieto, tallennetaan uusi paikkatieto
             juna.pkt = JSONtieto;
             juna.tiedot.nopeus = JSONtieto.speed;
             
-            // piirretään karttamerkki
-            piirraKarttamerkki(junanIndeksi);
-
         }  // tarkistetaan onko tiedoissa version, jolloin kyseessä on muut junan tiedot
         else if (JSONtieto.hasOwnProperty('version')) {
             // käsitellään junan tiedot
 
-            // päivitetään junan tietoja päivitysjonossa
-            paivitysjono.splice(paivitysjono.indexOf(JSONtieto.trainNumber),1);
+            // jos juna löytyy päivitysjonosta, poistetaan se
+            if (paivitysjono.indexOf(JSONtieto.trainNumber) != -1 ) paivitysjono.splice(paivitysjono.indexOf(JSONtieto.trainNumber),1);
+            // lisätään juna päivitysjonon perälle
             paivitysjono.push(JSONtieto.trainNumber);
 
             // tarkistetaan löytyykö vanha tieto
             if (juna.akt) {
                 // löytyy vanha tieto, verrataan versionumeroa:
-                // jos uuden tiedon versionumero on pienempi kuin vanhan
-                // uutta tietoa ei tallenneta
-                if (JSONtieto.version <= juna.akt.version) {
+                if (JSONtieto.version < juna.akt.version) {
                     // uuden tiedon versionumero on pienempi kuin jo tallennetun, poistutaan funktiosta
                     return
                 }
@@ -198,132 +224,132 @@ function paivitaJunanTiedot(JSONtieto) {
                 juna.akt = JSONtieto;
                 // päivitetään tieto siitä onko juna aikataulussa vai etuajassa/myöhässä
                 aikatauluTarkistus(junanIndeksi);
-
-
             } else {
                 // vanhoja tietoja ei löydy
-                // kutsutaan funktiota joka luo junalle perustiedot
                 juna.akt = JSONtieto;
+                // kutsutaan funktiota joka luo junalle perustiedot
                 tietojenHaku(junanIndeksi);
+                // päivitetän aikataulun ja toteutuneen ajan ero (--> .tieto.aikaero)
                 aikatauluTarkistus(junanIndeksi);
             }
-
-
-            // piirretään karttamerkki
-            piirraKarttamerkki(junanIndeksi);
-
         }
-    }
+
+        // pävitetään viimeisen päivityksen aika
+        juna.paivitettyViimeksi = new Date();
+        // tarkistetaan voiko merkin piirtää kartalle
+        juna.piirraMerkki = piirretaankoKarttamerkki(junanIndeksi);
+        // piirretään karttamerkki
+        paivitaKarttamerkki(junanIndeksi);
+
+    } 
 }
 
 function poistaJuna(junanNumero) {
     let indeksi = etsiJunaTaulukosta(junanNumero);
+    poistaKarttamerkki(indeksi);
+    junat.splice(indeksi,1);
+    paivitysjono = paivitysjono.filter((numero) => {
+        return numero != junanNumero;
+    });
 
-    if (indeksi != -1) {
-
-        let poista = true,
-        juna = junat[indeksi];
-        let nyt = new Date();
-
-        // onko junalla aikataulutiedot?
-        if (juna.akt) {
-            // junalla on aikataulutiedot, tarkistetaan onko juna perillä
-            let perilla = onkoPerilla(indeksi);
-            
-            if (perilla) { // perilla = perilläoloaika
-                let perillaAika = new Date(perilla);
-                // onko juna ollut perillä alle 5 minuuttia?
-                if (nyt - perillaAika < 1000*60*5) {
-                    poista = false;
-                    console.log('Perillä alle 5 min: ',juna.numero);
-                } else {
-                    console.log('Perillä yli 5 minuuttia, poistetaan: ',juna.numero)
-                }
-                //console.log(perillaAika.toLocaleTimeString(),nyt-perillaAika);
-            } else { // perilla = null, juna on siis matkalla
-                poista = false;
-                console.log('Matkalla, ei poisteta:',juna.numero)
-            }
-        } else {
-            console.log('Ei aikataulutietoja, poistetaan:',juna.numero);
-        }
-/*
-        // jos junaa ollaan vielä poistamassa ja junalla on paikkatieto, 
-        // tarkistetaan onko paikkatiedoissa jotain joka estää merkin poiston
-        if (poista && juna.pkt) {
-            let edellinenPaivitysaika = new Date(juna.pkt.timestamp);
-            if (nyt - edellinenPaivitysaika < 1000*60) poista = false;
-        }
-*/
-/*
-        if (junat[indeksi].pkt) {
-            let edellinenPaivitysaika = new Date(junat[indeksi].pkt.timestamp);
-            let nyt = new Date();
-
-            if (nyt-edellinenPaivitysaika > 60000) poista = true;
-            
-        } else poista = true;
-*/
-        if (poista) {
-            //console.log('Poistetaan juna:',juna.numero);
-            poistaKarttamerkki(indeksi);
-            junat.splice(indeksi,1);
-            paivitysjono = paivitysjono.filter((numero) => {
-                return numero != junanNumero;
-            });
-
-            if (valittuJuna == junanNumero) {
-                valittuJuna = -1;
-                // funktiokutsu, jolla suljetaan sivupaneeli
-            }
-        } //else console.log('Ei poisteta: ',juna.numero);
+    if (valittuJuna == junanNumero) {
+        valittuJuna = -1;
+        // funktiokutsu, jolla suljetaan sivupaneeli
     }
+
 }
 
-function paivitaKaikkiPaikkatiedot() {
-    
-    // lisätään kaikki junat poistettavien listalle
-    let poistettavat = []
-    junat.forEach((juna) => {
-        poistettavat.push(juna.numero);
-    });
 
-    haeJSON('https://rata.digitraffic.fi/api/v1/train-locations/latest/', (virhekoodi, vastaus) => {
-        if (virhekoodi) console.warn('Virhe haettaessa kaikkien junien paikkatietoja!\n', virhekoodi);
-        else {
-            pysaytaPaivitys = true;
-            vastaus.forEach((rivi) => {
-                paivitaJunanTiedot(rivi);
-                poistettavat = poistettavat.filter((numero) => {
-                    return numero != rivi.trainNumber;
-                })
-            });
-            pysaytaPaivitys = false;
-            console.log('Poistolistalla: ',poistettavat);
-            if (poistettavat.length > 0) {
-                poistettavat.forEach((numero) => {
-                    poistaJuna(numero);
-                })
+// tarkistaa voidaanko karttamerkki näyttää kartalla
+// palauttaa true jos voidaan ja false jos merkki pitää piilottaa
+function piirretaankoKarttamerkki(indeksi) {
+    let nyt = new Date();
+    let juna = junat[indeksi];
+
+    // onko junalla paikkatieto, jos on, onko se yli 2 minuuttia vanhaa?
+    if (juna.pkt) {
+        if (nyt - new Date(juna.pkt.timestamp) >= 1000*60*2) {
+            return false;
+        }
+    }
+
+    // onko junalla paikkatieto, mutta ei muita tietoja ja onko juna luotu yli 2 minuuttia sitten
+    if (juna.pkt != null && juna.akt == null && (nyt - new Date(juna.luotu) >= 1000*60*2)) {
+        return false;
+    }
+
+    // onko junalla aikataulutieto ja onko juna ollut perillä jo yli 3 minuuttia
+    if (juna.akt) {
+        let perilla = onkoPerilla(indeksi);
+        if (perilla) {
+            if (nyt - new Date(perilla) >= 1000*60*3) {
+                return false;
             }
         }
-    });
+    }
+
+    // jos mikään edellisistä ei toteutunut palautetaan tosi eli karttamerkin voi näyttää
+    return true;
 
 }
 
 function ajastettuPaivitys() {
     paivitysLaskuri += 1;
     if (paivitysLaskuri == 6) {
+        // joka 6. kerta haetaan manuaalisesti kaikkien junien paikkatiedot 
+        // ja tarkistetaan karttamerkkien piirrettävyys ja poistettavat junat
         paivitysLaskuri = 0;
-        paivitaKaikkiPaikkatiedot();
+
+        haeJSON('https://rata.digitraffic.fi/api/v1/train-locations/latest/', (virhekoodi, vastaus) => {
+            if (virhekoodi) console.warn('Virhe haettaessa kaikkien junien paikkatietoja!\n', virhekoodi);
+            else {
+                pysaytaPaivitys = true;
+                vastaus.forEach((rivi) => {
+                    paivitaJunanTiedot(rivi);
+                });
+                pysaytaPaivitys = false;
+            }
+        });
+
+        let nyt = new Date();
+        
+        // käydään läpi kaikki junat
+        junat.forEach((juna,indeksi) => {
+    
+            // tarkistetaan piirretäänkö merkki kartalle
+            let tarkistus = piirretaankoKarttamerkki(indeksi);
+            
+            if (juna.piirraMerkki != tarkistus) {
+                juna.piirraMerkki = tarkistus;
+                paivitaKarttamerkki(indeksi);
+            } 
+        
+            // jos junan tietoja ei ole päivitetty 10 minuuttiin poistetaan se
+            if (nyt - new Date(juna.paivitettyViimeksi) >= 1000*60*10) {
+                console.log('Poistetaan juna',juna.numero);
+                poistaJuna(juna.numero);
+            }
+        })
+    
     } else {
+        // otetaan päivitysjonosta max. 10 ensimmäistä junaa ja haetaan niille tiedot
         let paivitystenMaara = (paivitysjono.length >= 10) ? 10 : paivitysjono.length;
-        for (let i=0; i<paivitystenMaara; i++) {
-            if (typeof paivitysjono[i] === 'number') {
-                haeJSON('https://rata.digitraffic.fi/api/v1/trains/latest/'+paivitysjono[i], (virhekoodi, vastaus) => {
-                    if (virhekoodi) console.warn('Virhe haettaessa junan',paivitysjono[i],'tietoja!\n', virhekoodi);
+        // leikataan junien numerot pois päivitysjonosta
+        let kasiteltavat = paivitysjono.splice(0, paivitystenMaara);
+        for (let i=0; i<kasiteltavat.length; i++) {
+            if (typeof kasiteltavat[i] === 'number') {
+                haeJSON('https://rata.digitraffic.fi/api/v1/trains/latest/'+kasiteltavat[i], (virhekoodi, vastaus) => {
+                    if (virhekoodi) console.warn('Virhe haettaessa junan',kasiteltavat[i],'tietoja!\n', virhekoodi);
                     else {
-                        if (vastaus.length > 0) paivitaJunanTiedot(vastaus[0]);
-                    } 
+                        if (vastaus.length > 0) {
+                            paivitaJunanTiedot(vastaus[0]);
+                        } 
+                        /*
+                        else {
+                            console.log('Junalle ei löydy tietoja:',kasiteltavat[i]);
+                            //tarkistaPoistetaankoJuna(kasiteltavat[i]);
+                        } */
+                    }
                 });
             } // if
         } // for
@@ -372,20 +398,6 @@ function haeJSON(osoite, paluufunktio) {
         });
 }
 
-
-/*
-function kasitteleMQTTJSON(kohdetieto,JSONtieto) {
-
-    // tarkistetaan onko kyseessä paikkatieto, jos on onkoPaikkatieto=true,
-    // jos ei ole paikkatieto, tarkistetaan onko kyseessä junan tiedot, 
-    // jos on junan tiedot onkoPaikkatieto=false,
-    // jos ei ole paikkatieto eikä junan tieto niin palautetaan null
-    let onkoPaikkatieto = (kohdetieto.includes('train-locations')) ? true : (kohdetieto.includes('trains')) ? false : null;
-
-    // jos onkoPaikkatieto on jotain muuta kuin null, päivitetään junan tiedot
-    if (onkoPaikkatieto != null) paivitaJunanTiedot(onkoPaikkatieto, JSONtieto);
-}
-*/
 
 function asetaMQTTkuuntelija() {
     MQTTyhteys = new Paho.MQTT.Client('rata.digitraffic.fi', 443, 'myclientid_' + parseInt(Math.random() * 10000, 10));

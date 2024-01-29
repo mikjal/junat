@@ -13,6 +13,7 @@ body {
 
 img.harmaa {
     filter: grayscale(1);
+    cursor: grab;
 }
 
 .leaflet-tooltip {
