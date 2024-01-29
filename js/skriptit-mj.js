@@ -162,17 +162,25 @@ function paivitaKarttamerkki(indeksi) {
                 console.log('Klikattiin junan',juna.numero,'merkkiä.');
                 console.log(juna);
                 
-                if (valittuJuna != -1) poistaValinta(valittuJuna);
-                juna.karttamerkki._icon.classList.add('punainen');
-                valittuJuna = juna.numero;
-
-                if (kartta.getZoom() < 10) {
-                    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],10);
+                // tarkistetaan valittiinko sama juna uudelleen, jos valittiin, poistetaan valinta
+                if (valittuJuna == juna.numero) {
+                    poistaValinta(valittuJuna);
+                    valittuJuna = -1;
+                    // tänne koodi joka sulkee sivupaneelin
+                    
                 } else {
-                    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+                    if (valittuJuna != -1) poistaValinta(valittuJuna);
+                    juna.karttamerkki._icon.classList.add('punainen');
+                    valittuJuna = juna.numero;
+    
+                    if (kartta.getZoom() < 10) {
+                        kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],10);
+                    } else {
+                        kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+                    }
+    
+                    sivuPaneeli(juna.numero);
                 }
-
-                sivuPaneeli(juna.numero);
                 });
         }
     }
