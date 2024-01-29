@@ -95,7 +95,7 @@ function seuraavaAsema(indeksi) {
     let aika;
     if (element.akt != null) {
         element.akt.timeTableRows.forEach((asema, index) => {
-            if (element.akt.timeTableRows[0].actualTime == undefined) {
+            if (element.akt.timeTableRows[0].actualTime == undefined && element.pkt.speed == 0) {
                 teksti = 'Lähtee klo (' + new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString() + ')';
                 // if (element.akt.timeTableRows[1].trainStopping != undefined) {
                 //     if (element.akt.timeTableRows[1].trainStopping == false) {
