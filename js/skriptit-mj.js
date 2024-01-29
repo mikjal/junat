@@ -5,7 +5,8 @@ let kartta,
     paivitysjono = [],
     pysaytaPaivitys = false,
     valittuJuna = -1,
-    paivitysLaskuri = 0;
+    paivitysLaskuri = 0,
+    seuraaMerkkia = true;
 
 // metatiedot
 const mt = {
@@ -100,6 +101,10 @@ function paivitaKarttamerkki(indeksi) {
             // merkki on jo olemassa, siirretään sitä
             juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
 
+            if (juna.numero == valittuJuna && seuraaMerkkia) {
+                kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+            }
+
         } else {
             // merkkiä ei vielä ole kartalla, lisätään se
             // varmistetaan ensin että paikkatieto on olemassa
@@ -152,10 +157,21 @@ function paivitaKarttamerkki(indeksi) {
         // jos junan tiedoissa on että juna ei ole valittavissa, muutetaan se
         if (!juna.merkkiValittavissa) {
             juna.merkkiValittavissa = true;
-            juna.karttamerkki.on('click',() => {
+            juna.karttamerkki.on('click',(event) => {
                 // tänne tulee funktiokutsu jolla näytetään junan aikataulu
                 console.log('Klikattiin junan',juna.numero,'merkkiä.');
                 console.log(juna);
+                
+                if (valittuJuna != -1) poistaValinta(valittuJuna);
+                juna.karttamerkki._icon.classList.add('punainen');
+                valittuJuna = juna.numero;
+
+                if (kartta.getZoom() < 10) {
+                    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],10);
+                } else {
+                    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+                }
+
                 sivuPaneeli(juna.numero);
                 });
         }
@@ -243,6 +259,13 @@ function paivitaJunanTiedot(JSONtieto) {
         paivitaKarttamerkki(junanIndeksi);
 
     } 
+}
+
+function poistaValinta() {
+    if (valittuJuna != -1) {
+        let indeksi = etsiJunaTaulukosta(valittuJuna);
+        if (indeksi != -1) junat[indeksi].karttamerkki._icon.classList.remove('punainen');
+    }
 }
 
 function poistaJuna(junanNumero) {
