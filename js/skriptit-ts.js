@@ -91,46 +91,21 @@ function onkoPerilla(indeksi) {
 function seuraavaAsema(indeksi) {
     // Tallennetaan junat olio muuttujaan
     let element = junat[indeksi];
+    // Luodaan teksti niminen muuttuja
     let teksti = '';
+    // Luodaan teksti niminen muuttuja
     let aika;
+    // Jos junalta löytyy aikataulu käydään sieltä asemat läpi ja asetetaan tekstimuuttujaan sopiva teksti riippuen
+    // missä juna on menossa.
     if (element.akt != null) {
         element.akt.timeTableRows.forEach((asema, index) => {
             if (element.akt.timeTableRows[0].actualTime == undefined && element.pkt.speed == 0) {
-                teksti = 'Lähtee klo (' + new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString() + ')';
-                // if (element.akt.timeTableRows[1].trainStopping != undefined) {
-                //     if (element.akt.timeTableRows[1].trainStopping == false) {
-                //         if (element.akt.timeTableRows[1].liveEstimateTime != undefined) {
-                //             aika = new Date(element.akt.timeTableRows[1].liveEstimateTime).toLocaleTimeString();
-                //         } else {
-                //             aika = new Date(element.akt.timeTableRows[1].scheduledTime).toLocaleTimeString();
-                //         }
-                //         teksti =
-                //             'Seuraavana ohittaa aseman ' +
-                //             etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
-                //             ' (' +
-                //             aika +
-                //             ') Lähtee klo (' +
-                //             new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString() +
-                //             ')';
-                //     } else {
-                //         if (element.akt.timeTableRows[1].liveEstimateTime != undefined) {
-                //             aika = new Date(element.akt.timeTableRows[1].liveEstimateTime).toLocaleTimeString();
-                //         } else {
-                //             aika = new Date(element.akt.timeTableRows[1].scheduledTime).toLocaleTimeString();
-                //         }
-                //         teksti =
-                //             'Seuraavana ' +
-                //             etsiAsemanNimi(element.akt.timeTableRows[1].stationUICCode) +
-                //             ' (' +
-                //             aika +
-                //             ') Lähtee klo (' +
-                //             new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString() +
-                //             ')';
-                //     }
-                // }
+                // jos juna on lähtöasemalla ja vielä paikallaan
+                teksti = 'Lähtee klo ' + new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString();
             }
             if (asema.actualTime !== undefined) {
                 if (index == element.akt.timeTableRows.length) {
+                    // jos juna on pääteasemalla
                     teksti =
                         'Pääteasema ' +
                         etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode) +
@@ -144,6 +119,7 @@ function seuraavaAsema(indeksi) {
                         } else if (element.akt.timeTableRows[index + 1].scheduledTime) {
                             aika = new Date(element.akt.timeTableRows[index + 1].scheduledTime).toLocaleTimeString();
                         }
+                        // Jos juna ei pysähdy seuraavalla asemalla
                         teksti = 'Seuraavana ohittaa aseman ' + etsiAsemanNimi(element.akt.timeTableRows[index + 1].stationUICCode) + ' (' + aika + ')';
                     } else {
                         if (element.akt.timeTableRows[index + 1].liveEstimateTime) {
@@ -151,12 +127,12 @@ function seuraavaAsema(indeksi) {
                         } else if (element.akt.timeTableRows[index + 1].scheduledTime) {
                             aika = new Date(element.akt.timeTableRows[index + 1].scheduledTime).toLocaleTimeString();
                         }
+                        // Jos juna pysähtyy seuraavalla asemalla
                         teksti = 'Seuraavana ' + etsiAsemanNimi(element.akt.timeTableRows[index + 1].stationUICCode) + ' (' + aika + ')';
                     }
                 }
             }
         });
-        // console.log(teksti);
         return teksti;
     }
 }
