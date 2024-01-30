@@ -206,6 +206,7 @@ function paivitaKarttamerkki(indeksi) {
                 // tarkistetaan valittiinko sama juna uudelleen, jos valittiin, poistetaan valinta
                 if (valittuJuna == juna.numero) {
                     poistaValinta(valittuJuna);
+                    document.querySelector('#paneeli').style.marginLeft = '-400px';
                     // tänne koodi joka sulkee sivupaneelin
 
                 } else {
@@ -219,6 +220,8 @@ function paivitaKarttamerkki(indeksi) {
                         kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
                     }
     
+                    document.querySelector('#paneeli').style.marginLeft = '10px';
+
                     sivuPaneeli(juna.numero);
                 }
                 });
@@ -545,10 +548,19 @@ function etsiAsemanNimi(uic) {
     return null;
 }
 
+function hatullinen() {
+    document.querySelector('#paneeli').style.height = document.querySelector('#vasenSivu').clientHeight - document.querySelector('#pvmAika').clientHeight - 30 + 'px';
+}
+
 window.onload = () => {
+
+
     luoKartta();
 
     asetaMQTTkuuntelija();
+
+    hatullinen();
+    window.onresize = hatullinen;
 
     setInterval(ajastettuPaivitys, 5000);
 };
