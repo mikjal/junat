@@ -20,19 +20,21 @@ img.punainen {
     filter: hue-rotate(150deg);
 }
 
-.pvmAika {
-    position: fixed;
-    left: 10px;
-    top: 10px;
-    z-index: 1100;
+.laatikko {
+  color: #ffffff;
+  background: #444444;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  border-right: 10px #444444 solid;
+  margin-top: 10px;
+}
+
+#pvmAika {
+    margin-left: 10px;
+    height: 80px;
+    width: 332px;
     font-size: 16px;
     padding: 24px;
-    color: #ffffff;
-    background: #444444;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-    border-right: 10px #444444 solid;
-    width: 403px;
     font-weight: 500;
     font-family: "Inter", sans-serif;
   }
@@ -51,7 +53,27 @@ img.punainen {
     font-family: "Inter", sans-serif;
     font-size: 1.1em;
 }
-  
+
+#vasenSivu {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 400px;
+  background-color: transparent;
+  z-index: 1100;
+}
+
+#paneeli {
+  margin-left: -400px;
+  height: 128px;
+  width: 380px;
+  transition: 0.5s;
+}
+
+/*
   .leaflet-sidebar {
     border-radius:4px;
     position: fixed;
@@ -260,4 +282,5 @@ img.punainen {
   
   .leaflet-sidebar-right.collapsed ~ .leaflet-control-container .leaflet-right {
     right: 50px; }
-  
+
+    */
