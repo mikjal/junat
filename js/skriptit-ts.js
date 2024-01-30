@@ -104,7 +104,7 @@ function seuraavaAsema(indeksi) {
                 teksti = 'Lähtee klo ' + new Date(element.akt.timeTableRows[0].scheduledTime).toLocaleTimeString();
             }
             if (asema.actualTime !== undefined) {
-                if (index == element.akt.timeTableRows.length) {
+                if (index == element.akt.timeTableRows.length - 1) {
                     // jos juna on pääteasemalla
                     teksti =
                         'Pääteasema ' +
