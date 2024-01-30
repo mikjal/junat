@@ -1,5 +1,5 @@
 
-function sivuPaneeli() {
+/* function sivuPaneeli() {
   var sidebar = L.control.sidebar('sidebar', {
     position: 'left'
   });
@@ -10,7 +10,7 @@ function sivuPaneeli() {
     sidebar.toggle();
     document.getElementById('siderbar-content').innerHTML = '<h2>Test</h2>';
   });
-}
+} */
 const aikaElement = document.querySelector(".aika");
 const pvmElement = document.querySelector(".paivam");
 
