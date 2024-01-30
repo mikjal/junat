@@ -205,8 +205,7 @@ function paivitaKarttamerkki(indeksi) {
                 
                 // tarkistetaan valittiinko sama juna uudelleen, jos valittiin, poistetaan valinta
                 if (valittuJuna == juna.numero) {
-                    poistaValinta(valittuJuna);
-                    document.querySelector('#paneeli').style.marginLeft = '-400px';
+                    suljePaneeli();
                     // tänne koodi joka sulkee sivupaneelin
 
                 } else {
@@ -550,6 +549,11 @@ function etsiAsemanNimi(uic) {
 
 function hatullinen() {
     document.querySelector('#paneeli').style.height = document.querySelector('#vasenSivu').clientHeight - document.querySelector('#pvmAika').clientHeight - 30 + 'px';
+}
+
+function suljePaneeli() {
+    poistaValinta();
+    document.querySelector('#paneeli').style.marginLeft = '-400px';
 }
 
 window.onload = () => {

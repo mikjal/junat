@@ -27,6 +27,7 @@ img.punainen {
   border-radius: 4px;
   border-right: 10px #444444 solid;
   margin-top: 10px;
+  font-family: "Inter", sans-serif;
 }
 
 #pvmAika {
@@ -36,7 +37,6 @@ img.punainen {
     font-size: 16px;
     padding: 24px;
     font-weight: 500;
-    font-family: "Inter", sans-serif;
   }
   
   .aika {
@@ -67,10 +67,20 @@ img.punainen {
 }
 
 #paneeli {
+  padding: 0;
   margin-left: -400px;
   height: 128px;
   width: 380px;
   transition: 0.5s;
+}
+
+#suljeNappula {
+  font-size: 35px;
+  float: right;
+  top: 0;
+  right: 0;
+  text-decoration: none;
+  color: #ffffff;
 }
 
 /*
