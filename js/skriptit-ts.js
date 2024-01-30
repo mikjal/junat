@@ -136,3 +136,61 @@ function seuraavaAsema(indeksi) {
         return teksti;
     }
 }
+
+function haeSyyluokat(indeksi) {
+    // Tallennetaan junat olio muuttujaan
+    let element = junat[indeksi];
+    let syyluokat = mt.syyluokat.tiedot;
+    if (element.akt != null) {
+        element.akt.timeTableRows.forEach((asema) => {
+            syyluokat.forEach((syyluokka) => {
+                if (asema.causes) {
+                    asema.causes.forEach((syy) => {
+                        if (syy.categoryCode == syyluokka.categoryCode) {
+                            // console.log(syyluokka.categoryName);
+                            return syyluokka.categoryName;
+                        }
+                    });
+                }
+            });
+        });
+    }
+}
+function haeSyykoodit(indeksi) {
+    // Tallennetaan junat olio muuttujaan
+    let element = junat[indeksi];
+    let syykoodit = mt.syykoodit.tiedot;
+    if (element.akt != null) {
+        element.akt.timeTableRows.forEach((asema) => {
+            syykoodit.forEach((syykoodi) => {
+                if (asema.causes) {
+                    asema.causes.forEach((syy) => {
+                        if (syy.detailedCategoryCode == syykoodi.detailedCategoryCode) {
+                            // console.log(syykoodi.detailedCategoryName);
+                            return syykoodi.detailedCategoryName;
+                        }
+                    });
+                }
+            });
+        });
+    }
+}
+function haeKolmastaso(indeksi) {
+    // Tallennetaan junat olio muuttujaan
+    let element = junat[indeksi];
+    let kolmastaso = mt.kolmastaso.tiedot;
+    if (element.akt != null) {
+        element.akt.timeTableRows.forEach((asema) => {
+            kolmastaso.forEach((taso) => {
+                if (asema.causes) {
+                    asema.causes.forEach((syy) => {
+                        if (syy.thirdCategoryCode == taso.thirdCategoryCode) {
+                            // console.log(taso.thirdCategoryName);
+                            return taso.thirdCategoryName;
+                        }
+                    });
+                }
+            });
+        });
+    }
+}
