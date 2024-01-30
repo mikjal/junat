@@ -140,8 +140,9 @@ function paivitaKarttamerkki(indeksi) {
                 if (juna.pkt.accuracy && piirraTarkkuus) {
                     juna.tarkkuusympyra = L.circle([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]], {
                         radius: juna.pkt.accuracy,
-                        opacity: 0.2,
-                        fillOpacity: 0.2
+                        opacity: 0,
+                        //fillColor: transparent,
+                        fillOpacity: 0.5
                     }).addTo(kartta);
                 }
 
@@ -316,7 +317,7 @@ function paivitaJunanTiedot(JSONtieto) {
 function poistaValinta() {
     if (valittuJuna != -1) {
         let indeksi = etsiJunaTaulukosta(valittuJuna);
-        if (indeksi != -1) junat[indeksi].karttamerkki._icon.classList.remove('punainen');
+        if (indeksi != -1) if (junat[indeksi].karttamerkki) junat[indeksi].karttamerkki._icon.classList.remove('punainen');
         valittuJuna = -1;
     }
 }

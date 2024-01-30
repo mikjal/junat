@@ -13,6 +13,11 @@ body {
 
 img.harmaa {
     filter: grayscale(1);
+    cursor: grab;
+}
+
+img.punainen {
+    filter: hue-rotate(150deg);
 }
 
 .pvmAika {
