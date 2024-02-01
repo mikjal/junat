@@ -55,8 +55,8 @@ function formatDate(pvm) {
     "Joulukuuta"
   ];
 
-  return `${Paivat[pvm.getDay()]}. ${pvm.getDate()} ${Kuukaudet[pvm.getMonth()]
-    }  ${pvm.getFullYear()}`;
+  return `${Paivat[pvm.getDay()]} ${pvm.getDate()}. ${Kuukaudet[pvm.getMonth()]
+    }  `;
 }
 
 
