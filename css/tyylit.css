@@ -74,6 +74,11 @@ img.punainen {
   text-decoration: none;
   color: #999;
 }
+
+h1 {
+  font-weight: normal;
+ font-size: 120%;
+}
 /*
   .leaflet-sidebar {
     border-radius:4px;
