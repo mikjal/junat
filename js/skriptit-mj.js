@@ -219,7 +219,7 @@ function paivitaKarttamerkki(indeksi) {
                         kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
                     }
     
-                    document.querySelector('#paneeli').style.marginLeft = '10px';
+                    document.querySelector('#paneeli').style.left = '10px';
 
                     sivuPaneeli(juna.numero);
                 }
@@ -547,13 +547,13 @@ function etsiAsemanNimi(uic) {
     return null;
 }
 
-function hatullinen() {
-    document.querySelector('#paneeli').style.height = document.querySelector('#vasenSivu').clientHeight - document.querySelector('#pvmAika').clientHeight - 30 + 'px';
+function paneelinKorkeus() {
+    document.querySelector('#paneeli').style.maxHeight = window.innerHeight - document.querySelector('#pvmAika').clientHeight - 30 + 'px';
 }
 
 function suljePaneeli() {
     poistaValinta();
-    document.querySelector('#paneeli').style.marginLeft = '-400px';
+    document.querySelector('#paneeli').style.left = '-400px';
 }
 
 window.onload = () => {
@@ -563,8 +563,8 @@ window.onload = () => {
 
     asetaMQTTkuuntelija();
 
-    hatullinen();
-    window.onresize = hatullinen;
+    paneelinKorkeus();
+    window.onresize = paneelinKorkeus;
 
     setInterval(ajastettuPaivitys, 5000);
 };
