@@ -195,29 +195,88 @@ function haeKolmastaso(indeksi) {
 function haeAsemaTiedot(indeksi) {
     // Tallennetaan junat olio muuttujaan
     let element = junat[indeksi];
+    let i = 0;
     if (element.akt != null) {
-        element.akt.timeTableRows.forEach((asema, index) => {
-            let lista = [];
-            if (asema.commercialStop == true) {
-                let asemaNimi = null;
-                let raideNro = null;
-                let saapumisaika = null;
-                let lahtoaika = null;
-                if (asema.type == 'ARRIVAL') {
-                    saapumisaika = new Date(asema.scheduledTime).toLocaleTimeString();
-                } else if (asema.type == 'DEPARTURE') {
-                    lahtoaika = new Date(asema.scheduledTime).toLocaleTimeString();
-                }
-                if (asema.stationUICCode) {
-                    asemaNimi = etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode);
-                }
-                if (asema.commercialTrack) {
-                    raideNro = asema.commercialTrack;
-                }
-                lista.push(asemaNimi, saapumisaika, lahtoaika, raideNro);
-                console.log(lista);
-                return lista;
+        while (i < element.akt.timeTableRows.length) {
+            if (i == 0) {
+                let tiedot = arrivalTiedot(element.akt.timeTableRows[i]);
+                rakennaTiedotSivupaneeliinLahto(tiedot);
+                i++;
+                continue;
+                // console.log(tiedot);
             }
-        });
+            if (i == element.akt.timeTableRows.length - 1) {
+                let tiedot = arrivalTiedot(element.akt.timeTableRows[i]);
+                rakennaTiedotSivupaneeliinTulo(tiedot);
+                i++;
+                continue;
+            } else if (element.akt.timeTableRows[i].commercialStop == true) {
+                let tiedot = arrivalDepartedTiedot(element.akt.timeTableRows[i], element.akt.timeTableRows[i + 1]);
+                rakennaTiedotSivupaneeliin(tiedot);
+                i = i + 2;
+                continue;
+            }
+            i++;
+        }
+        // let palautus = [];
+        // element.akt.timeTableRows.forEach((asema, index) => {
+        //     if (asema.commercialStop == true) {
+        //         let lista = [];
+        //         let asemaNimi = null;
+        //         let raideNro = null;
+        //         let saapumisaika = null;
+        //         let lahtoaika = null;
+        //         if (asema.type == 'ARRIVAL') {
+        //             saapumisaika = new Date(asema.scheduledTime).toLocaleTimeString();
+        //         } else if (asema.type == 'DEPARTURE') {
+        //             lahtoaika = new Date(asema.scheduledTime).toLocaleTimeString();
+        //         }
+        //         if (asema.stationUICCode) {
+        //             asemaNimi = etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode);
+        //         }
+        //         if (asema.commercialTrack) {
+        //             raideNro = asema.commercialTrack;
+        //         }
+        //         lista.push(asemaNimi, saapumisaika, lahtoaika, raideNro);
+        //         // console.log(lista);
+        //     }
+        //     palautus.push(lista);
+        // });
+        // return palautus;
     }
+}
+function arrivalTiedot(asema) {
+    let lista = [];
+    let asemaNimi = etsiAsemanNimi(asema.stationUICCode);
+    let lahtoaika = new Date(asema.scheduledTime).toLocaleTimeString();
+    let raideNro = asema.commercialTrack;
+    lista.push(asemaNimi, lahtoaika, raideNro);
+    return lista;
+}
+function arrivalDepartedTiedot(tulo, lahto) {
+    let lista = [];
+    let asemaNimi = etsiAsemanNimi(tulo.stationUICCode);
+    let tuloaika = new Date(tulo.scheduledTime).toLocaleTimeString();
+    let lahtoaika = new Date(lahto.scheduledTime).toLocaleTimeString();
+    let raideNro = tulo.commercialTrack;
+    lista.push(asemaNimi, tuloaika, lahtoaika, raideNro);
+    return lista;
+}
+function rakennaTiedotSivupaneeliin(lista) {
+    let aikataulu = document.getElementById('aikataulu');
+    let li = document.createElement('li');
+    li.innerHTML = lista[0] + ' Saapuu: ' + lista[1] + ' Lähtee: ' + lista[2] + ' Raide: ' + lista[3];
+    aikataulu.appendChild(li);
+}
+function rakennaTiedotSivupaneeliinLahto(lista) {
+    let aikataulu = document.getElementById('aikataulu');
+    let li = document.createElement('li');
+    li.innerHTML = lista[0] + ' Lähtee: ' + lista[1] + ' Raide: ' + lista[2];
+    aikataulu.appendChild(li);
+}
+function rakennaTiedotSivupaneeliinTulo(lista) {
+    let aikataulu = document.getElementById('aikataulu');
+    let li = document.createElement('li');
+    li.innerHTML = lista[0] + ' Saapuu: ' + lista[1] + ' Raide: ' + lista[2];
+    aikataulu.appendChild(li);
 }
