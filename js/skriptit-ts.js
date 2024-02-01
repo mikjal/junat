@@ -195,29 +195,29 @@ function haeKolmastaso(indeksi) {
 function haeAsemaTiedot(indeksi) {
     // Tallennetaan junat olio muuttujaan
     let element = junat[indeksi];
-    let asemaNimi = null;
-    let raideNro = null;
-    let saapumisaika = null;
-    let lahtoaika = null;
     if (element.akt != null) {
-        element.akt.timeTableRows.forEach((asema) => {
+        element.akt.timeTableRows.forEach((asema, index) => {
             let lista = [];
             if (asema.commercialStop == true) {
+                let asemaNimi = null;
+                let raideNro = null;
+                let saapumisaika = null;
+                let lahtoaika = null;
                 if (asema.type == 'ARRIVAL') {
                     saapumisaika = new Date(asema.scheduledTime).toLocaleTimeString();
                 } else if (asema.type == 'DEPARTURE') {
                     lahtoaika = new Date(asema.scheduledTime).toLocaleTimeString();
                 }
                 if (asema.stationUICCode) {
-                    asemaNimi = etsiAsemanNimi(asema.stationUICCode);
+                    asemaNimi = etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode);
                 }
                 if (asema.commercialTrack) {
                     raideNro = asema.commercialTrack;
                 }
+                lista.push(asemaNimi, saapumisaika, lahtoaika, raideNro);
+                console.log(lista);
+                return lista;
             }
-            lista.push(asemaNimi, saapumisaika, lahtoaika, raideNro);
-            console.log(lista);
-            return lista;
         });
     }
 }
