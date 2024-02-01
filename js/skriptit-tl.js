@@ -41,18 +41,18 @@ function formatDate(pvm) {
     "Lauantai"
   ];
   const Kuukaudet = [
-    "Tammikkuuta",
-    "Helmikuuta",
-    "Maaliskuuta",
-    "Huhtikuuta",
-    "Toukokuuta",
-    "Kesäkuuta",
-    "Heinäkuuta",
-    "Elokuuta",
-    "Syyskuuta",
-    "Lokakuuta",
-    "Marraskuuta",
-    "Joulukuuta"
+    "tammikuuta",
+    "helmikuuta",
+    "maaliskuuta",
+    "huhtikuuta",
+    "toukokuuta",
+    "kesäkuuta",
+    "heinäkuuta",
+    "elokuuta",
+    "syyskuuta",
+    "lokakuuta",
+    "marraskuuta",
+    "joulukuuta"
   ];
 
   return `${Paivat[pvm.getDay()]} ${pvm.getDate()}. ${Kuukaudet[pvm.getMonth()]
