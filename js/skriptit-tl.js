@@ -1,16 +1,24 @@
+function sivuPaneeli(junanNumero) {
+ 
+ let indeksi=  etsiJunaTaulukosta(junanNumero);
 
-/* function sivuPaneeli() {
-  var sidebar = L.control.sidebar('sidebar', {
-    position: 'left'
-  });
+ // Junan nimi
+document.getElementById(junat[indeksi].tiedot.nimi);
+document.querySelector("#junannimi").innerHTML = junat[indeksi].tiedot.nimi;
 
-  kartta.addControl(sidebar);
-  let uusiKarttamerkki = L.marker([])
-  uusiKarttamerkki.on('click', function () {
-    sidebar.toggle();
-    document.getElementById('siderbar-content').innerHTML = '<h2>Test</h2>';
-  });
-} */
+// Operaattori
+document.getElementById(junat[indeksi].tiedot.operaattori);
+document.querySelector("#operaattori").innerHTML = junat[indeksi].tiedot.operaattori;
+
+// Lähtöpaikka ja Määränpää
+document.getElementById(junat[indeksi].tiedot.lahtopaikka + junat[indeksi].tiedot.maaranpaa);
+document.querySelector("#lahtopaikkaJaMaaranpaa").innerHTML = junat[indeksi].tiedot.lahtopaikka + ' - ' + junat[indeksi].tiedot.maaranpaa;
+
+// Nopeus
+document.getElementById(junat[indeksi].tiedot.nopeus);
+document.querySelector("#nopeus").innerHTML = junat[indeksi].tiedot.nopeus + 'km/h';
+
+}
 const aikaElement = document.querySelector(".aika");
 const pvmElement = document.querySelector(".paivam");
 
@@ -41,18 +49,18 @@ function formatDate(pvm) {
     "Lauantai"
   ];
   const Kuukaudet = [
-    "Tammikkuuta",
-    "Helmikuuta",
-    "Maaliskuuta",
-    "Huhtikuuta",
-    "Toukokuuta",
-    "Kesäkuuta",
-    "Heinäkuuta",
-    "Elokuuta",
-    "Syyskuuta",
-    "Lokakuuta",
-    "Marraskuuta",
-    "Joulukuuta"
+    "tammikuuta",
+    "helmikuuta",
+    "maaliskuuta",
+    "huhtikuuta",
+    "toukokuuta",
+    "kesäkuuta",
+    "heinäkuuta",
+    "elokuuta",
+    "syyskuuta",
+    "lokakuuta",
+    "marraskuuta",
+    "joulukuuta"
   ];
 
   return `${Paivat[pvm.getDay()]} ${pvm.getDate()}. ${Kuukaudet[pvm.getMonth()]
