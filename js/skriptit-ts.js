@@ -147,7 +147,6 @@ function haeSyyluokat(indeksi) {
                 if (asema.causes) {
                     asema.causes.forEach((syy) => {
                         if (syy.categoryCode == syyluokka.categoryCode) {
-                            // console.log(syyluokka.categoryName);
                             return syyluokka.categoryName;
                         }
                     });
@@ -166,7 +165,6 @@ function haeSyykoodit(indeksi) {
                 if (asema.causes) {
                     asema.causes.forEach((syy) => {
                         if (syy.detailedCategoryCode == syykoodi.detailedCategoryCode) {
-                            // console.log(syykoodi.detailedCategoryName);
                             return syykoodi.detailedCategoryName;
                         }
                     });
@@ -185,12 +183,41 @@ function haeKolmastaso(indeksi) {
                 if (asema.causes) {
                     asema.causes.forEach((syy) => {
                         if (syy.thirdCategoryCode == taso.thirdCategoryCode) {
-                            // console.log(taso.thirdCategoryName);
                             return taso.thirdCategoryName;
                         }
                     });
                 }
             });
+        });
+    }
+}
+
+function haeAsemaTiedot(indeksi) {
+    // Tallennetaan junat olio muuttujaan
+    let element = junat[indeksi];
+    if (element.akt != null) {
+        element.akt.timeTableRows.forEach((asema, index) => {
+            let lista = [];
+            if (asema.commercialStop == true) {
+                let asemaNimi = null;
+                let raideNro = null;
+                let saapumisaika = null;
+                let lahtoaika = null;
+                if (asema.type == 'ARRIVAL') {
+                    saapumisaika = new Date(asema.scheduledTime).toLocaleTimeString();
+                } else if (asema.type == 'DEPARTURE') {
+                    lahtoaika = new Date(asema.scheduledTime).toLocaleTimeString();
+                }
+                if (asema.stationUICCode) {
+                    asemaNimi = etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode);
+                }
+                if (asema.commercialTrack) {
+                    raideNro = asema.commercialTrack;
+                }
+                lista.push(asemaNimi, saapumisaika, lahtoaika, raideNro);
+                console.log(lista);
+                return lista;
+            }
         });
     }
 }
