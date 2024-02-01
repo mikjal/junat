@@ -27,6 +27,13 @@
     <div id="paneeli" class="laatikko">
       <div id="sulje"><a href="#" id="suljeNappula" onclick="suljePaneeli();">&times;</a></div>
       <div id="tiedot">
+        <h2 id="junannimi"></h2>
+        <small2 id="operaattori"></small2>
+        <p2 id="lahtopaikkaJaMaaranpaa"></p2>
+        <p3 id="nopeus"></p3>
+       
+
+
       </div>
       <div id="aikataulu"></div>
     </div>
@@ -34,24 +41,10 @@
     <div id="kartta-alue">
     </div>
 
-<!--
-    <div id="sidebar" class="leaflet-sidebar">
-        <div class="leaflet-sidebar-tabs">
-          <ul role="tablist">
-            <li><a href="#sidebar-content" role="tab"><i class="fa fa-info"></i></a></li>
-          </ul>
-        </div>
-      </div>
-        <div class="leaflet-sidebar-content" id="sidebar-content">
-        </div>
--->  
-      
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
     <!-- Leaflet JavaScript-->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<!--
-    <script src="https://unpkg.com/leaflet-sidebar-v2/js/leaflet-sidebar.js"></script>
--->
+
     <!-- Omat JavaScriptit -->
     <script src="js/skriptit-mj.js"></script>
     <script src="js/skriptit-tl.js"></script>
