@@ -264,19 +264,43 @@ function arrivalDepartedTiedot(tulo, lahto) {
 }
 function rakennaTiedotSivupaneeliin(lista) {
     let aikataulu = document.getElementById('aikataulu');
-    let li = document.createElement('li');
-    li.innerHTML = lista[0] + ' Saapuu: ' + lista[1] + ' Lähtee: ' + lista[2] + ' Raide: ' + lista[3];
-    aikataulu.appendChild(li);
+    let divContainer = document.createElement('div');
+    let divAsemaNimi = document.createElement('div');
+    let divAjat = document.createElement('div');
+    divContainer.className = 'mycontainer';
+    divAsemaNimi.className = 'asemaNimi';
+    divAjat.className = 'ajat';
+    divAsemaNimi.innerHTML = '<p><b>' + lista[0] + '</b><br />Laituri ' + lista[3] + '</p>';
+    divAjat.innerHTML = '<p>' + lista[1] + '<br />' + lista[2] + '</p>';
+    divContainer.appendChild(divAsemaNimi);
+    divContainer.appendChild(divAjat);
+    aikataulu.appendChild(divContainer);
 }
 function rakennaTiedotSivupaneeliinLahto(lista) {
     let aikataulu = document.getElementById('aikataulu');
-    let li = document.createElement('li');
-    li.innerHTML = lista[0] + ' Lähtee: ' + lista[1] + ' Raide: ' + lista[2];
-    aikataulu.appendChild(li);
+    let divContainer = document.createElement('div');
+    let divAsemaNimi = document.createElement('div');
+    let divAjat = document.createElement('div');
+    divContainer.className = 'mycontainer';
+    divAsemaNimi.className = 'asemaNimi';
+    divAjat.className = 'ajat';
+    divAsemaNimi.innerHTML = '<p><b>' + lista[0] + '</b><br />Laituri ' + lista[2] + '</p>';
+    divAjat.innerHTML = '<p><br />' + lista[1] + '</p>';
+    divContainer.appendChild(divAsemaNimi);
+    divContainer.appendChild(divAjat);
+    aikataulu.appendChild(divContainer);
 }
 function rakennaTiedotSivupaneeliinTulo(lista) {
     let aikataulu = document.getElementById('aikataulu');
-    let li = document.createElement('li');
-    li.innerHTML = lista[0] + ' Saapuu: ' + lista[1] + ' Raide: ' + lista[2];
-    aikataulu.appendChild(li);
+    let divContainer = document.createElement('div');
+    let divAsemaNimi = document.createElement('div');
+    let divAjat = document.createElement('div');
+    divContainer.className = 'mycontainer';
+    divAsemaNimi.className = 'asemaNimi';
+    divAjat.className = 'ajat';
+    divAsemaNimi.innerHTML = '<p><b>' + lista[0] + '</b><br />Laituri ' + lista[2] + '</p>';
+    divAjat.innerHTML = '<p>' + lista[1] + '<br /></p>';
+    divContainer.appendChild(divAsemaNimi);
+    divContainer.appendChild(divAjat);
+    aikataulu.appendChild(divContainer);
 }
