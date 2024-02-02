@@ -221,6 +221,7 @@ function paivitaKarttamerkki(indeksi) {
     
                     naytaPaneeli();
                     sivuPaneeli(juna.numero);
+                    haeAsemaTiedot(indeksi);
                 }
                 });
         }
@@ -232,13 +233,16 @@ function naytaPaneeli() {
     document.querySelector('#paneeli').style.left = '0px';
 }
 
-function kapeaRuutu() {
-    return window.matchMedia('(max-width: 600px)').matches;
+function onkoKapeaRuutu() {
+    return window.matchMedia('(max-width: 700px), (max-height: 600px)').matches;
 }
 
-function paneelinKorkeus() {
+function laskePaneelinKorkeus() {
+    let marginaalit = (onkoKapeaRuutu()) ? 10 : 20;
+    let ylareuna = parseInt(window.getComputedStyle(document.querySelector('#paneeli')).top.replace('px',''));
+    
     // maxHeight
-    document.querySelector('#paneeli').style.height = window.innerHeight - document.querySelector('#pvmAika').clientHeight - 30 + 'px';
+    document.querySelector('#paneeli').style.maxHeight = window.innerHeight - ylareuna - marginaalit + 'px';
         
 }
 
@@ -571,7 +575,9 @@ function etsiAsemanNimi(uic) {
 window.onload = () => {
 
     luoKartta();
-    paneelinKorkeus();
+    laskePaneelinKorkeus();
+
+    window.onresize = () => { laskePaneelinKorkeus(); };
 
     asetaMQTTkuuntelija();
 
