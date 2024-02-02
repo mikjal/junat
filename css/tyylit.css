@@ -36,6 +36,7 @@ img.punainen {
   background-color: darkgrey;
   color: black;
   margin-top: 5px;
+  border-radius: 4px;
 }
 .mycontainer > div {
   width: 50%;
