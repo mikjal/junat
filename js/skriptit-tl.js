@@ -1,4 +1,4 @@
-function sivuPaneeli(junanNumero) {
+function paivitaTiedotOsio(junanNumero) {
  
  let indeksi=  etsiJunaTaulukosta(junanNumero);
 
