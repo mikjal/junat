@@ -202,6 +202,8 @@ function paivitaKarttamerkki(indeksi) {
                 klik(juna.numero);
             });
         }
+
+        if (valittuJuna == juna.numero) paivitaTiedotOsio(juna.numero);
     }
         
 }
