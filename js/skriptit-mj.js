@@ -198,35 +198,42 @@ function paivitaKarttamerkki(indeksi) {
         // jos junan tiedoissa on että juna ei ole valittavissa, muutetaan se
         if (!juna.merkkiValittavissa) {
             juna.merkkiValittavissa = true;
-            juna.karttamerkki.on('click',(event) => {
-                // tänne tulee funktiokutsu jolla näytetään junan aikataulu
-                console.log('Klikattiin junan',juna.numero,'merkkiä.');
-                console.log(juna);
-                
-                // tarkistetaan valittiinko sama juna uudelleen, jos valittiin, poistetaan valinta
-                if (valittuJuna == juna.numero) {
-                    suljePaneeli();
-                    // tänne koodi joka sulkee sivupaneelin
-
-                } else {
-                    if (valittuJuna != -1) poistaValinta(valittuJuna);
-                    juna.karttamerkki._icon.classList.add('punainen');
-                    valittuJuna = juna.numero;
-    
-                    if (kartta.getZoom() < 10) {
-                        kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],10);
-                    } else {
-                        kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
-                    }
-    
-                    naytaPaneeli();
-                    sivuPaneeli(juna.numero);
-                    haeAsemaTiedot(indeksi);
-                }
-                });
+            juna.karttamerkki.on('click',() => {
+                klik(juna.numero);
+            });
         }
     }
         
+}
+
+function klik(junanNumero) {
+    
+    let juna = junat[etsiJunaTaulukosta(junanNumero)];
+
+    // tarkistetaan valittiinko sama juna uudelleen, jos valittiin, poistetaan valinta
+    if (valittuJuna == junanNumero) {
+        poistaValinta();
+        suljePaneeli();
+
+    } else {
+        if (valittuJuna != -1) poistaValinta(valittuJuna);
+        juna.karttamerkki._icon.classList.add('punainen');
+        valittuJuna = juna.numero;
+
+        if (kartta.getZoom() < 10) {
+            kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],10);
+        } else {
+            kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+        }
+
+        sivuPaneeli(junanNumero);
+    }
+}
+
+function sivuPaneeli(junanNumero) {
+    naytaPaneeli();
+    paivitaTiedotOsio(junanNumero);
+    haeAsemaTiedot(etsiJunaTaulukosta(junanNumero));
 }
 
 function naytaPaneeli() {
@@ -356,7 +363,7 @@ function poistaJuna(junanNumero) {
 
     if (valittuJuna == junanNumero) {
         poistaValinta();
-        // funktiokutsu, jolla suljetaan sivupaneeli
+        suljePaneeli();
     }
 
 }
