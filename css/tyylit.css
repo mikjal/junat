@@ -33,8 +33,10 @@ img.punainen {
 
 
 #pvmAika {
-  top: 10px;
-  left: 10px;
+  top: 0;
+  left: 0;
+  margin-top: 10px;
+  margin-left: 10px;
   height: 128px;
   width: 380px;
   font-size: 16px;
@@ -43,9 +45,10 @@ img.punainen {
 }
 
 #paneeli {
-  margin: 0;
+  margin-top: 10px;
+  margin-left: 10px;
   padding: 0 10px 10px 10px;
-  top: 148px;
+  top: 138px;
   left: -400px;
   min-height: 128px;
   width: 380px;
@@ -54,6 +57,7 @@ img.punainen {
 }
 
 .aika {
+    
     font-size: 3em;
     color: #ffffff;
 }
@@ -79,6 +83,34 @@ h1 {
  font-weight: normal;
  font-size: 110%;
 }
+
+@media screen and (max-width: 700px), (max-height: 600px) {
+  #pvmAika {
+    margin-top: 0;
+    margin-left: 0;
+    height: 64px;
+    width: 160px;
+    font-size: 50%;
+    padding: 12px;
+  }
+
+  .laatikko {
+    box-shadow: 0;
+    border-radius: 0;
+  }
+
+  #paneeli {
+    margin-top: 5px;
+    margin-left: 0;
+    padding: 0 5px 5px 5px;
+    top: 64px;
+    min-height: 128px;
+    width: 228px;
+    font-size: 60%;
+  }
+  
+}
+
 /*
   .leaflet-sidebar {
     border-radius:4px;

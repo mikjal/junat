@@ -219,14 +219,32 @@ function paivitaKarttamerkki(indeksi) {
                         kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
                     }
     
-                    document.querySelector('#paneeli').style.left = '10px';
-
+                    naytaPaneeli();
                     sivuPaneeli(juna.numero);
                 }
                 });
         }
     }
         
+}
+
+function naytaPaneeli() {
+    document.querySelector('#paneeli').style.left = '0px';
+}
+
+function kapeaRuutu() {
+    return window.matchMedia('(max-width: 600px)').matches;
+}
+
+function paneelinKorkeus() {
+    // maxHeight
+    document.querySelector('#paneeli').style.height = window.innerHeight - document.querySelector('#pvmAika').clientHeight - 30 + 'px';
+        
+}
+
+function suljePaneeli() {
+    poistaValinta();
+    document.querySelector('#paneeli').style.left = '-400px';
 }
 
 function poistaKarttamerkki(indeksi) {
@@ -349,12 +367,14 @@ function piirretaankoKarttamerkki(indeksi) {
     // onko junalla paikkatieto, jos on, onko se yli 2 minuuttia vanhaa?
     if (juna.pkt) {
         if (nyt - new Date(juna.pkt.timestamp) >= 1000*60*2) {
+            //console.log('Paikkatieto on yli 2 minuuttia vanha: ',juna.numero)
             return false;
         }
     }
 
     // onko junalla paikkatieto, mutta ei muita tietoja ja onko juna luotu yli 2 minuuttia sitten
     if (juna.pkt != null && juna.akt == null && (nyt - new Date(juna.luotu) >= 1000*60*2)) {
+        //console.log('Junalla on paikkatieto, mutta ei muita tietoja ja se on luotu yli 2 minuuttia sitten: ',juna.numero)
         return false;
     }
 
@@ -363,6 +383,7 @@ function piirretaankoKarttamerkki(indeksi) {
         let perilla = onkoPerilla(indeksi);
         if (perilla) {
             if (nyt - new Date(perilla) >= 1000*60*3) {
+                //console.log('Juna on ollut perillä yli 3 minuuttia: ',juna.numero)
                 return false;
             }
         }
@@ -547,24 +568,12 @@ function etsiAsemanNimi(uic) {
     return null;
 }
 
-function paneelinKorkeus() {
-    document.querySelector('#paneeli').style.maxHeight = window.innerHeight - document.querySelector('#pvmAika').clientHeight - 30 + 'px';
-}
-
-function suljePaneeli() {
-    poistaValinta();
-    document.querySelector('#paneeli').style.left = '-400px';
-}
-
 window.onload = () => {
 
-
     luoKartta();
+    paneelinKorkeus();
 
     asetaMQTTkuuntelija();
-
-    paneelinKorkeus();
-    window.onresize = paneelinKorkeus;
 
     setInterval(ajastettuPaivitys, 5000);
 };
