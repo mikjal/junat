@@ -3,23 +3,23 @@ function paivitaTiedotOsio(junanNumero) {
  let indeksi=  etsiJunaTaulukosta(junanNumero);
 
  // Junan nimi
-document.getElementById(junat[indeksi].tiedot.nimi);
+
 document.querySelector("#junannimi").innerHTML = junat[indeksi].tiedot.nimi;
 
 // Operaattori
-document.getElementById(junat[indeksi].tiedot.operaattori);
+
 document.querySelector("#operaattori").innerHTML = junat[indeksi].tiedot.operaattori;
 
 // Lähtöpaikka ja Määränpää
-document.getElementById(junat[indeksi].tiedot.lahtopaikka + junat[indeksi].tiedot.maaranpaa);
+
 document.querySelector("#lahtopaikkaJaMaaranpaa").innerHTML = junat[indeksi].tiedot.lahtopaikka + ' - ' + junat[indeksi].tiedot.maaranpaa;
 
 // Nopeus
-document.getElementById(junat[indeksi].tiedot.nopeus);
+
 document.querySelector("#nopeus").innerHTML = 'Nopeus: ' + junat[indeksi].tiedot.nopeus + ' km/h';
 
 // Aikaero
-document.getElementById(junat[indeksi].tiedot.aikaero);
+
 
 if(junat[indeksi].tiedot.aikaero < -1) {
 document.querySelector("#aikaEro").innerHTML = Math.abs(junat[indeksi].tiedot.aikaero) + ' minuuttia etuajassa';
@@ -40,10 +40,7 @@ if(junat[indeksi].tiedot.aikaero == -1) {
   } 
 
   // Seuraava asema
- document.querySelector("#aikaEro").innerHTML = seuraavaAsema(indeksi);
-
-
-  
+document.querySelector("#seuraavaAsema").innerHTML = seuraavaAsema(indeksi);
 }
 
 const aikaElement = document.querySelector(".aika");
