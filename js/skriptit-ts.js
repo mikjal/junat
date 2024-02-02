@@ -218,31 +218,6 @@ function haeAsemaTiedot(indeksi) {
             }
             i++;
         }
-        // let palautus = [];
-        // element.akt.timeTableRows.forEach((asema, index) => {
-        //     if (asema.commercialStop == true) {
-        //         let lista = [];
-        //         let asemaNimi = null;
-        //         let raideNro = null;
-        //         let saapumisaika = null;
-        //         let lahtoaika = null;
-        //         if (asema.type == 'ARRIVAL') {
-        //             saapumisaika = new Date(asema.scheduledTime).toLocaleTimeString();
-        //         } else if (asema.type == 'DEPARTURE') {
-        //             lahtoaika = new Date(asema.scheduledTime).toLocaleTimeString();
-        //         }
-        //         if (asema.stationUICCode) {
-        //             asemaNimi = etsiAsemanNimi(element.akt.timeTableRows[index].stationUICCode);
-        //         }
-        //         if (asema.commercialTrack) {
-        //             raideNro = asema.commercialTrack;
-        //         }
-        //         lista.push(asemaNimi, saapumisaika, lahtoaika, raideNro);
-        //         // console.log(lista);
-        //     }
-        //     palautus.push(lista);
-        // });
-        // return palautus;
     }
 }
 function arrivalTiedot(asema) {
