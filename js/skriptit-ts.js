@@ -137,62 +137,35 @@ function seuraavaAsema(indeksi) {
     }
 }
 
-function haeSyyluokat(indeksi) {
-    // Tallennetaan junat olio muuttujaan
-    let element = junat[indeksi];
+function haeSyyluokat(tunnus) {
     let syyluokat = mt.syyluokat.tiedot;
-    if (element.akt != null) {
-        element.akt.timeTableRows.forEach((asema) => {
-            syyluokat.forEach((syyluokka) => {
-                if (asema.causes) {
-                    asema.causes.forEach((syy) => {
-                        if (syy.categoryCode == syyluokka.categoryCode) {
-                            return syyluokka.categoryName;
-                        }
-                    });
-                }
-            });
-        });
-    }
+    syyluokat.forEach((syyluokka) => {
+        if (syyluokka.id == tunnus) {
+            return syyluokka.categoryName;
+        }
+    });
 }
-function haeSyykoodit(indeksi) {
-    // Tallennetaan junat olio muuttujaan
-    let element = junat[indeksi];
+function haeSyykoodit(tunnus) {
     let syykoodit = mt.syykoodit.tiedot;
-    if (element.akt != null) {
-        element.akt.timeTableRows.forEach((asema) => {
-            syykoodit.forEach((syykoodi) => {
-                if (asema.causes) {
-                    asema.causes.forEach((syy) => {
-                        if (syy.detailedCategoryCode == syykoodi.detailedCategoryCode) {
-                            return syykoodi.detailedCategoryName;
-                        }
-                    });
-                }
-            });
-        });
-    }
+    syykoodit.forEach((syykoodi) => {
+        if (syykoodi.id == tunnus) {
+            return syykoodi.detailedCategoryName;
+        }
+    });
 }
-function haeKolmastaso(indeksi) {
-    // Tallennetaan junat olio muuttujaan
-    let element = junat[indeksi];
+
+function haeKolmastaso(tunnus) {
     let kolmastaso = mt.kolmastaso.tiedot;
-    if (element.akt != null) {
-        element.akt.timeTableRows.forEach((asema) => {
-            kolmastaso.forEach((taso) => {
-                if (asema.causes) {
-                    asema.causes.forEach((syy) => {
-                        if (syy.thirdCategoryCode == taso.thirdCategoryCode) {
-                            return taso.thirdCategoryName;
-                        }
-                    });
-                }
-            });
-        });
-    }
+    kolmastaso.forEach((taso) => {
+        if (taso.id == tunnus) {
+            return taso.thirdCategoryName;
+        }
+    });
 }
 
 function haeAsemaTiedot(indeksi) {
+    let aikataulu = document.getElementById('aikataulu');
+    aikataulu.innerHTML = '';
     // Tallennetaan junat olio muuttujaan
     let element = junat[indeksi];
     let i = 0;
@@ -203,7 +176,6 @@ function haeAsemaTiedot(indeksi) {
                 rakennaTiedotSivupaneeliinLahto(tiedot);
                 i++;
                 continue;
-                // console.log(tiedot);
             }
             if (i == element.akt.timeTableRows.length - 1) {
                 let tiedot = arrivalTiedot(element.akt.timeTableRows[i]);
