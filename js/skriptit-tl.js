@@ -16,9 +16,36 @@ document.querySelector("#lahtopaikkaJaMaaranpaa").innerHTML = junat[indeksi].tie
 
 // Nopeus
 document.getElementById(junat[indeksi].tiedot.nopeus);
-document.querySelector("#nopeus").innerHTML = junat[indeksi].tiedot.nopeus + 'km/h';
+document.querySelector("#nopeus").innerHTML = 'Nopeus: ' + junat[indeksi].tiedot.nopeus + ' km/h';
 
+// Aikaero
+document.getElementById(junat[indeksi].tiedot.aikaero);
+
+if(junat[indeksi].tiedot.aikaero < -1) {
+document.querySelector("#aikaEro").innerHTML = Math.abs(junat[indeksi].tiedot.aikaero) + ' minuuttia etuajassa';
 }
+if(junat[indeksi].tiedot.aikaero == -1) {
+  document.querySelector("#aikaEro").innerHTML = 'Minuutin etuajassa';
+}
+  if(junat[indeksi].tiedot.aikaero == 0) {
+    document.querySelector("#aikaEro").innerHTML = 'Aikataulussa';
+  }
+
+  if(junat[indeksi].tiedot.aikaero == 1) {
+    document.querySelector("#aikaEro").innerHTML = 'Minuutin myöhässä';
+  } 
+ 
+  if(junat[indeksi].tiedot.aikaero > 1) {
+    document.querySelector("#aikaEro").innerHTML = junat[indeksi].tiedot.aikaero + ' minuuttia myöhässä';
+  } 
+
+  // Seuraava asema
+ document.querySelector("#aikaEro").innerHTML = seuraavaAsema(indeksi);
+
+
+  
+}
+
 const aikaElement = document.querySelector(".aika");
 const pvmElement = document.querySelector(".paivam");
 
