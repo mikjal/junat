@@ -240,19 +240,36 @@ function sivuPaneeli(junanNumero) {
 
 function naytaPaneeli() {
     document.querySelector('#paneeli').style.left = '0px';
+    document.querySelector('#pienenna').classList.remove('kaanna');
 }
 
-function onkoKapeaRuutu() {
+function onkoPieniRuutu() {
     return window.matchMedia('(max-width: 700px), (max-height: 600px)').matches;
 }
 
 function laskePaneelinKorkeus() {
-    let marginaalit = (onkoKapeaRuutu()) ? 10 : 20;
-    let ylareuna = parseInt(window.getComputedStyle(document.querySelector('#paneeli')).top.replace('px',''));
+    let marginaalit = (onkoPieniRuutu()) ? 10 : 20;
+    let paneeli = document.querySelector('#paneeli');
+    let ylareuna = parseInt(window.getComputedStyle(paneeli).top.replace('px',''));
     
-    // maxHeight
-    document.querySelector('#paneeli').style.maxHeight = window.innerHeight - ylareuna - marginaalit + 'px';
-        
+    paneeli.style.maxHeight = window.innerHeight - ylareuna - marginaalit + 'px';
+
+    if (window.getComputedStyle(paneeli).left != '0px' && window.getComputedStyle(paneeli).left != '-400px') {
+        paneeli.style.left = '0px';
+        document.querySelector('#pienenna').classList.remove('kaanna');
+    }
+}
+
+function pienennaPaneeli() {
+    let paneeli = document.querySelector('#paneeli');
+    if (paneeli.style.left == '0px') {
+        document.querySelector('#pienenna').classList.add('kaanna');
+        paneeli.style.left = '-236px';
+    } else {
+        document.querySelector('#pienenna').classList.remove('kaanna');
+        paneeli.style.left = '0px';
+    }
+    
 }
 
 function suljePaneeli() {

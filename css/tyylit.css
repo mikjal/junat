@@ -87,16 +87,29 @@ img.punainen {
     font-size: 1.1em;
 }
 
-#suljeNappula {
+.nappula {
   font-size: 35px;
   float: right; 
-  text-decoration: none;
   color: #999;
+}
+
+.nappula:hover {
+  cursor: pointer;
+
+}
+
+#pienenna {
+  display: none;
+  transition: all 0.5s ease;
 }
 
 h1 {
  font-weight: normal;
  font-size: 110%;
+}
+
+.kaanna {
+  transform: rotate(180deg);
 }
 
 @media screen and (max-width: 700px), (max-height: 600px) {
@@ -123,6 +136,11 @@ h1 {
     width: 266px;
     font-size: 70%;
   }
+
+  #pienenna {
+    display: block;
+  }
+  
   
 }
 
