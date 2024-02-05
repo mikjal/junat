@@ -144,6 +144,12 @@ select {
 
 }
 
+#aikataulu {
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+
 #pienenna {
   display: none;
   transition: all 0.5s ease;

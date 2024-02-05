@@ -235,7 +235,19 @@ function klik(junanNumero) {
 function sivuPaneeli(junanNumero) {
     naytaPaneeli();
     paivitaTiedotOsio(junanNumero);
+    naytaAikataulu(junanNumero);
+}
+
+function naytaAikataulu(junanNumero) {
+    document.querySelector('#aikataulu').style.maxHeight =  '';
+
     haeAsemaTiedot(etsiJunaTaulukosta(junanNumero));
+
+    let paneeliPohja = document.querySelector('#paneeli').getBoundingClientRect().bottom;
+    let aikataulu = document.querySelector('#aikataulu').getBoundingClientRect();
+    let erotus = Math.round(aikataulu.height+paneeliPohja-aikataulu.bottom-10);
+
+    document.querySelector('#aikataulu').style.maxHeight =  erotus + 'px';
 }
 
 function naytaPaneeli() {
@@ -252,8 +264,11 @@ function laskePaneelinKorkeus() {
     let paneeli = document.querySelector('#paneeli');
     let ylareuna = parseInt(window.getComputedStyle(paneeli).top.replace('px',''));
     
+    // päivitetään sivupaneelin maksimikorkeus
     paneeli.style.maxHeight = window.innerHeight - ylareuna - marginaalit + 'px';
-
+    
+    // onko sivupaneeli pienennettynä ja ikkunan koko vaihtui pienestä isoksi?
+    // tuodaan sivupaneeli tällöin näkyville
     if (window.getComputedStyle(paneeli).left != '0px' && window.getComputedStyle(paneeli).left != '-400px') {
         paneeli.style.left = '0px';
         document.querySelector('#pienenna').classList.remove('kaanna');
