@@ -17,13 +17,31 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     </head>
     <body>
         <!-- Selaimen tarkastus -->
         <noscript><h2>Selaimesi ei tue Javascriptiä</h2></noscript>
         <script src="js/selain.js"></script>
 
+        <div id="options">
+            <label class="optionsLabel" for="seuraaJunaa">Seuraa junaa: </label>
+            <input class="optionsLabel" type="checkbox" name="seuraaJunaa" id="seuraaJunaa" /><br />
+            <label class="optionsLabel" for="zoomaus">Zoomaus: </label>
+            <input class="optionsLabel" type="checkbox" name="zoomaus" id="zoomaus" /><br />
+            <label class="optionsLabel" for="tarkkusympyra">Tarkkusympyrä: </label>
+            <input class="optionsLabel" type="checkbox" name="tarkkusympyra" id="tarkkusympyra" /><br />
+            <p>Merkin tarkkusympyrä tarkkuus:</p>
+            <select id="tarkkusympyraTarkkuus" name="tarkkusympyraTarkkuus">
+                <option value="30">Tarkkuus: 30 metriä</option>
+                <option value="50">Tarkkuus: 50 metriä</option>
+                <option value="100">Tarkkuus: 100 metriä</option>
+            </select>
+        </div>
         <div id="pvmAika" class="laatikko">
+            <div>
+                <span id="settings" class="material-symbols-outlined"> settings </span>
+            </div>
             <div class="aika"></div>
             <div class="paivam"></div>
         </div>

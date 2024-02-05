@@ -251,3 +251,18 @@ function rakennaTiedotSivupaneeliinTulo(lista) {
     divContainer.appendChild(divAjat);
     aikataulu.appendChild(divContainer);
 }
+
+let settings = document.getElementById('settings');
+let options = document.getElementById('options');
+settings.addEventListener('click', openSettings);
+
+function openSettings() {
+    if (options.style.display == 'none') {
+        options.style.display = 'block';
+    } else {
+        options.style.display = 'none !important';
+        console.log('poistu');
+    }
+    options.style.display = 'block';
+    console.log('klikattiin ratasta');
+}
