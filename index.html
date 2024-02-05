@@ -25,17 +25,18 @@
         <script src="js/selain.js"></script>
 
         <div id="options">
-            <label class="optionsLabel" for="seuraaJunaa">Seuraa junaa: </label>
+            <p>Valittaessa juna:</p>
+            <label class="optionsLabel" for="seuraaJunaa">Seuraa junan karttamerkkiä </label>
             <input class="optionsLabel" type="checkbox" name="seuraaJunaa" id="seuraaJunaa" /><br />
-            <label class="optionsLabel" for="zoomaus">Zoomaus: </label>
-            <input class="optionsLabel" type="checkbox" name="zoomaus" id="zoomaus" /><br />
-            <label class="optionsLabel" for="tarkkusympyra">Tarkkusympyrä: </label>
+            <label class="optionsLabel" for="zoomaus">Zoomaa tarvittaessa lähemmäksi </label>
+            <input class="optionsLabel" type="checkbox" name="zoomaus" id="zoomaus" /><br /><br />
+            <p>Karttamerkin tarkkuus:</p>
+            <label class="optionsLabel" for="tarkkusympyra">Piirrä tarkkuusympyrä </label>
             <input class="optionsLabel" type="checkbox" name="tarkkusympyra" id="tarkkusympyra" /><br />
-            <p>Merkin tarkkusympyrä tarkkuus:</p>
             <select id="tarkkusympyraTarkkuus" name="tarkkusympyraTarkkuus">
-                <option value="30">Tarkkuus: 30 metriä</option>
-                <option value="50">Tarkkuus: 50 metriä</option>
-                <option value="100">Tarkkuus: 100 metriä</option>
+                <option value="eiRajoitusta">ei rajoitusta</option>
+                <option value="20">20 metriä</option>
+                <option value="40">40 metriä</option>
             </select>
         </div>
         <div id="pvmAika" class="laatikko">
