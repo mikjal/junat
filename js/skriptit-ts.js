@@ -255,14 +255,14 @@ function rakennaTiedotSivupaneeliinTulo(lista) {
 let settings = document.getElementById('settings');
 let options = document.getElementById('options');
 settings.addEventListener('click', openSettings);
+options.style.display = 'none';
 
 function openSettings() {
-    if (options.style.display == 'none') {
+    if (options.style.display === 'none') {
         options.style.display = 'block';
     } else {
-        options.style.display = 'none !important';
-        console.log('poistu');
+        options.style.display = 'none';
     }
-    options.style.display = 'block';
+
     console.log('klikattiin ratasta');
 }
