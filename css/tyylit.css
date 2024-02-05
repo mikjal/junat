@@ -38,12 +38,17 @@ img.punainen {
   margin-top: 5px;
   border-radius: 4px;
 }
-.mycontainer > div {
-  width: 50%;
+.mycontainer > .asemaNimi {
+  width: 80%;
   padding-left: 10px;
 }
+.mycontainer > .ajat {
+  width: 20%;
+  padding-left: 10px;
+}
+
 .ajat {
-  text-align: right;
+  text-align: left;
   padding-right: 20px;
 }
 
