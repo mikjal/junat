@@ -1,13 +1,15 @@
 let kartta,
-    MQTTyhteys,
+    MQTTyhteys, 
     debug = false,
-    junat = [],
-    paivitysjono = [],
-    pysaytaPaivitys = false,
-    valittuJuna = -1,
-    paivitysLaskuri = 0,
-    seuraaMerkkia = true,
-    piirraTarkkuus = true;
+    junat = [], // junat-taulukko: sisältää kaikki juna-oliot
+    paivitysjono = [], // päivitysjono junien tietojen ajastettua päivitystä varten
+    pysaytaPaivitys = false, // varmistus että MQTT:n kautta saadut päivitykset eivät sotke ajastettua päivitystä
+    valittuJuna = -1, // valittun junan numero, -1 = ei valittua junaa
+    paivitysLaskuri = 0, // laskuri jonka avulla ajastetaan kaikkien junien paikkatietojen haku
+    seuraaMerkkia = true, // seurataanko valitun junan merkkiä
+    piirraTarkkuus = true, // piirretäänkö junan karttamerkin ympärille tarkkuusympyrä
+    zoomaaLahemmas = true, // zoomataanko tarvittaaessa lähemmäs kun juna valitaan
+    maxTarkkuus = 0; // halutaanko tarkkuusympyrän kokoa rajoittaa, 0 = ei rajoitusta
 
 // metatiedot
 const mt = {
@@ -25,6 +27,7 @@ const mt = {
         osoite: 'https://rata.digitraffic.fi/api/v1/metadata/stations',
         tiedot: null,
     },
+/*
     syyluokat: {
         osoite: 'https://rata.digitraffic.fi/api/v1/metadata/cause-category-codes',
         tiedot: null,
@@ -37,7 +40,6 @@ const mt = {
         osoite: 'https://rata.digitraffic.fi/api/v1/metadata/third-cause-category-codes',
         tiedot: null,
     },
-/*
     junat: {
         osoite: 'https://rata.digitraffic.fi/api/v1/live-trains',
         tiedot: null,
@@ -105,7 +107,7 @@ function etsiJunaTaulukosta(junanNumero) {
 
 function paivitaKarttamerkki(indeksi) {
     
-    // heataan viittaus junaan
+    // haetaan viittaus junaan
     let juna = junat[indeksi];
 
     // saako karttamerkin piirtaa kartalle
@@ -117,7 +119,7 @@ function paivitaKarttamerkki(indeksi) {
                 juna.tarkkuusympyra.removeFrom(kartta);
                 if (piirraTarkkuus) {
                     juna.tarkkuusympyra = L.circle([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]], {
-                        radius: juna.pkt.accuracy,
+                        radius: (maxTarkkuus != 0 && juna.pkt.accuracy > maxTarkkuus) ? maxTarkkuus : juna.pkt.accuracy,
                         opacity: 0.2,
                         fillOpacity: 0.2
                     }).addTo(kartta);
@@ -127,8 +129,22 @@ function paivitaKarttamerkki(indeksi) {
             // merkki on jo olemassa, siirretään sitä
             juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
 
+            // jos kyseessä on valittu juna ja seurataan merkkiä, keskitetään se ruudulle
             if (juna.numero == valittuJuna && seuraaMerkkia) {
-                kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+                // otetaan huomioon sivupaneelin leveys, jos ollaan "isolla" näytöllä
+                //if (onkoPieniNaytto()) {
+                    // "pieni" näyttö, keskitetään ilman paddingia
+                    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
+                //} else {
+                //    console.log(document.querySelector('#paneeli').clientWidth);
+                //    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],
+                //                    kartta.getZoom(),
+                //                    {
+                //                        padding: [1000,0]
+                //                    });
+                //}
+                
+                
             }
 
         } else {
@@ -157,16 +173,17 @@ function paivitaKarttamerkki(indeksi) {
                 }
                 // karttamerkin sijoitus junaan
                 juna.karttamerkki = uusiKarttamerkki;
-
-        
+       
             }
         } 
-    } else { // jos junalla on merkki kartalla, poistetaan se
+    } else { 
+        // jos junalla on merkki kartalla, poistetaan se
         if (juna.karttamerkki) poistaKarttamerkki(indeksi);
+        // jos juna on valittu juna, poistetaan valinta
         if (juna.numero == valittuJuna) {
             poistaValinta();
         }
-    }// if juna.piirramerkki
+    }// end if juna.piirramerkki
 
     // jos junan merkin saa piirtää ja junalla on aikataulu, paikkatieto sekä karttamerkki
     if (juna.piirraMerkki && juna.akt && juna.pkt && juna.karttamerkki) {
@@ -233,21 +250,33 @@ function klik(junanNumero) {
 }
 
 function sivuPaneeli(junanNumero) {
+    // sivupaneeli näkyville
     naytaPaneeli();
+    // päivitetään junan tiedot vastaamaan valittua junaa
     paivitaTiedotOsio(junanNumero);
+    // päivitetään aikataulu ja se korkeus vastaamaan valittua junaa
     naytaAikataulu(junanNumero);
 }
 
 function naytaAikataulu(junanNumero) {
+    // nollataan aikataulun vanha maksimikorkeus
     document.querySelector('#aikataulu').style.maxHeight =  '';
 
+    // muodostetaan paneeliin uusi aikataululista
     haeAsemaTiedot(etsiJunaTaulukosta(junanNumero));
 
-    let paneeliPohja = document.querySelector('#paneeli').getBoundingClientRect().bottom;
-    let aikataulu = document.querySelector('#aikataulu').getBoundingClientRect();
-    let erotus = Math.round(aikataulu.height+paneeliPohja-aikataulu.bottom-10);
+    // jos paneeli on isolla näytöllä tai tietyssä tilanteessa pienellä näytöllä, vähennetään aikataulun korkeudesta 10
+    let lisa = 10;
+    // haetaan paneelin ja aikataulu-osan mitat
+    let paneelinMitat = document.querySelector('#paneeli').getBoundingClientRect();
+    let aikataulunMitat = document.querySelector('#aikataulu').getBoundingClientRect();
+    
+    // onko paneeli pienellä näytöllä ja aikataulun korkeus ei ylitä paneelin maksimikorkeutta --> lisää ei tarvita
+    if (onkoPieniNaytto() && aikataulunMitat.top + aikataulunMitat.height < paneelinMitat.bottom ) lisa = 0;
 
-    document.querySelector('#aikataulu').style.maxHeight =  erotus + 'px';
+    // lasketaan aikataulu-osan uusi korkeus ja asetetaan se aikataulun maxHeightiksi
+    let aikataulunUusiKorkeus = Math.round(aikataulunMitat.height+paneelinMitat.bottom-aikataulunMitat.bottom-lisa);
+    document.querySelector('#aikataulu').style.maxHeight =  aikataulunUusiKorkeus + 'px';
 }
 
 function naytaPaneeli() {
@@ -255,12 +284,13 @@ function naytaPaneeli() {
     document.querySelector('#pienenna').classList.remove('kaanna');
 }
 
-function onkoPieniRuutu() {
+function onkoPieniNaytto() {
+    // vastaako media query pienen äytön arvoja?
     return window.matchMedia('(max-width: 700px), (max-height: 600px)').matches;
 }
 
 function laskePaneelinKorkeus() {
-    let marginaalit = (onkoPieniRuutu()) ? 10 : 20;
+    let marginaalit = (onkoPieniNaytto()) ? 10 : 20;
     let paneeli = document.querySelector('#paneeli');
     let ylareuna = parseInt(window.getComputedStyle(paneeli).top.replace('px',''));
     
@@ -618,7 +648,10 @@ window.onload = () => {
     luoKartta();
     laskePaneelinKorkeus();
 
-    window.onresize = () => { laskePaneelinKorkeus(); };
+    window.onresize = () => { 
+        laskePaneelinKorkeus();
+        if (valittuJuna != -1) naytaAikataulu(valittuJuna);
+    };
 
     asetaMQTTkuuntelija();
 
