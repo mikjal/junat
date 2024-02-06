@@ -137,31 +137,31 @@ function seuraavaAsema(indeksi) {
     }
 }
 
-function haeSyyluokat(tunnus) {
-    let syyluokat = mt.syyluokat.tiedot;
-    syyluokat.forEach((syyluokka) => {
-        if (syyluokka.id == tunnus) {
-            return syyluokka.categoryName;
-        }
-    });
-}
-function haeSyykoodit(tunnus) {
-    let syykoodit = mt.syykoodit.tiedot;
-    syykoodit.forEach((syykoodi) => {
-        if (syykoodi.id == tunnus) {
-            return syykoodi.detailedCategoryName;
-        }
-    });
-}
+// function haeSyyluokat(tunnus) {
+//     let syyluokat = mt.syyluokat.tiedot;
+//     syyluokat.forEach((syyluokka) => {
+//         if (syyluokka.id == tunnus) {
+//             return syyluokka.categoryName;
+//         }
+//     });
+// }
+// function haeSyykoodit(tunnus) {
+//     let syykoodit = mt.syykoodit.tiedot;
+//     syykoodit.forEach((syykoodi) => {
+//         if (syykoodi.id == tunnus) {
+//             return syykoodi.detailedCategoryName;
+//         }
+//     });
+// }
 
-function haeKolmastaso(tunnus) {
-    let kolmastaso = mt.kolmastaso.tiedot;
-    kolmastaso.forEach((taso) => {
-        if (taso.id == tunnus) {
-            return taso.thirdCategoryName;
-        }
-    });
-}
+// function haeKolmastaso(tunnus) {
+//     let kolmastaso = mt.kolmastaso.tiedot;
+//     kolmastaso.forEach((taso) => {
+//         if (taso.id == tunnus) {
+//             return taso.thirdCategoryName;
+//         }
+//     });
+// }
 
 function haeAsemaTiedot(indeksi) {
     let aikataulu = document.getElementById('aikataulu');
@@ -254,8 +254,20 @@ function rakennaTiedotSivupaneeliinTulo(lista) {
 
 let settings = document.getElementById('settings');
 let options = document.getElementById('options');
+let seuraaJunaa = document.getElementById('seuraaJunaa');
+let zoomaus = document.getElementById('zoomaus');
+let tarkkusympyra = document.getElementById('tarkkusympyra');
+let tarkkusympyraTarkkuus = document.getElementById('tarkkusympyraTarkkuus');
+let peruuta = document.getElementById('peruuta');
+let tallenna = document.getElementById('tallenna');
 settings.addEventListener('click', openSettings);
+peruuta.addEventListener('click', klikattiinPeruuta);
+tallenna.addEventListener('click', klikattiinTallenna);
 options.style.display = 'none';
+seuraaJunaa.checked = seuraaMerkkia;
+zoomaus.checked = zoomaaLahemmas;
+tarkkusympyra.checked = piirraTarkkuus;
+tarkkusympyraTarkkuus.value = maxTarkkuus;
 
 function openSettings() {
     if (options.style.display === 'none') {
@@ -263,6 +275,15 @@ function openSettings() {
     } else {
         options.style.display = 'none';
     }
+}
 
-    console.log('klikattiin ratasta');
+function klikattiinPeruuta() {
+    options.style.display = 'none';
+}
+function klikattiinTallenna() {
+    seuraaMerkkia = seuraaJunaa.checked;
+    zoomaaLahemmas = zoomaus.checked;
+    piirraTarkkuus = tarkkusympyra.checked;
+    maxTarkkuus = tarkkusympyraTarkkuus.value;
+    options.style.display = 'none';
 }
