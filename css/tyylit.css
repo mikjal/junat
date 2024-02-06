@@ -177,7 +177,7 @@ h2 {
   line-height: 15px;
 }
 
-h3 {
+#tiedot h3 {
   padding-bottom: 28px;
  line-height: 0px;
   font-weight: normal;
@@ -185,7 +185,7 @@ h3 {
   margin: 0px;
 }
 
-h1 {
+#tiedot p {
   margin: 0px;
   padding-bottom: 8px;
  font-weight: normal;
