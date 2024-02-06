@@ -132,19 +132,7 @@ function paivitaKarttamerkki(indeksi) {
             // jos kyseessä on valittu juna ja seurataan merkkiä, keskitetään se ruudulle
             if (juna.numero == valittuJuna && seuraaMerkkia) {
                 // otetaan huomioon sivupaneelin leveys, jos ollaan "isolla" näytöllä
-                //if (onkoPieniNaytto()) {
-                    // "pieni" näyttö, keskitetään ilman paddingia
-                    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
-                //} else {
-                //    console.log(document.querySelector('#paneeli').clientWidth);
-                //    kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],
-                //                    kartta.getZoom(),
-                //                    {
-                //                        padding: [1000,0]
-                //                    });
-                //}
-                
-                
+                kartta.setView(laskeKeskitys([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]));
             }
 
         } else {
@@ -225,6 +213,21 @@ function paivitaKarttamerkki(indeksi) {
         
 }
 
+// siirretään karttamerkin keskityspistettä oikealle (käytössä kun sivupaneli on auki "isolla" näytöllä)
+function laskeKeskitys(latlng) {
+
+    if (onkoPieniNaytto()) {
+        // "pieni" näyttö, keskitetään ilman "paddingia"
+        return latlng
+    } else {
+        // "iso" näyttö, keskitetään karttamerkki enemmän oikealle
+        let piste = kartta.project(latlng);
+        piste.x -= 200;
+        return kartta.unproject(piste);    
+    }
+
+}
+
 function klik(junanNumero) {
     
     let juna = junat[etsiJunaTaulukosta(junanNumero)];
@@ -239,13 +242,13 @@ function klik(junanNumero) {
         juna.karttamerkki._icon.classList.add('punainen');
         valittuJuna = juna.numero;
 
-        if (kartta.getZoom() < 10) {
-            kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],10);
-        } else {
-            kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
-        }
+        let zoomi = (zoomaaLahemmas && kartta.getZoom()<10) ? 10 : kartta.getZoom();
+        kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],zoomi);
+        //kartta.setZoom(zoomi);
+        //kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],zoomi);
 
         sivuPaneeli(junanNumero);
+        //kartta.setView(laskeKeskitys([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]),zoomi);
     }
 }
 
@@ -255,7 +258,7 @@ function sivuPaneeli(junanNumero) {
     // päivitetään junan tiedot vastaamaan valittua junaa
     paivitaTiedotOsio(junanNumero);
     // päivitetään aikataulu ja se korkeus vastaamaan valittua junaa
-    naytaAikataulu(junanNumero);
+    naytaAikataulu(junanNumero);    
 }
 
 function naytaAikataulu(junanNumero) {
