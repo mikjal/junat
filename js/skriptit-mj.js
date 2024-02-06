@@ -170,6 +170,7 @@ function paivitaKarttamerkki(indeksi) {
         // jos juna on valittu juna, poistetaan valinta
         if (juna.numero == valittuJuna) {
             poistaValinta();
+            suljePaneeli();
         }
     }// end if juna.piirramerkki
 
