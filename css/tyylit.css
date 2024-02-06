@@ -173,7 +173,7 @@ select {
   transition: all 0.5s ease;
 }
 
-h2 {
+#tiedot h2 {
   line-height: 15px;
 }
 
