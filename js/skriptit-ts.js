@@ -38,12 +38,18 @@ function tietojenHaku(indeksi) {
         element.tiedot.lahtopaikka = etsiAsemanNimi(element.akt.timeTableRows[0].stationUICCode);
         // Käydään hakemassa kyseisen junan määränpää aikatauluista ja asetetaan se junat olioon
         element.tiedot.maaranpaa = etsiAsemanNimi(element.akt.timeTableRows[element.akt.timeTableRows.length - 1].stationUICCode);
-        // Verrataan junan operaattori lyhennettä ja jos se on sama lyhenne asetetaan operaattorin nimi junat olioon
-        operaattoriLista.forEach((operaattori) => {
-            if (operaattori.operatorShortCode == element.akt.operatorShortCode) {
-                element.tiedot.operaattori = operaattori.operatorName;
-            }
-        });
+        // Tarkistetaan löytyykö operaattori lista
+        if (operaattoriLista) {
+            // Verrataan junan operaattori lyhennettä ja jos se on sama lyhenne asetetaan operaattorin nimi junat olioon
+            operaattoriLista.forEach((operaattori) => {
+                if (operaattori.operatorShortCode == element.akt.operatorShortCode) {
+                    element.tiedot.operaattori = operaattori.operatorName;
+                }
+            });
+            // Jos operaattori listaa ei löydy annetaan virheilmoitus konsoliin
+        } else {
+            console.log('Operaattori listaa ei löydy!');
+        }
         // Asetetaan junan lyhenne ja numero siltävaralta, että junaa ei löydy nimipari listasta
         element.tiedot.nimi = element.akt.trainType + element.numero;
         // Käydään nimiparit lista läpi ja jos kyseessä on lähijuna asetetaan nimeksi Lähijuna + junan kirjain
@@ -137,61 +143,59 @@ function seuraavaAsema(indeksi) {
     }
 }
 
-// function haeSyyluokat(tunnus) {
-//     let syyluokat = mt.syyluokat.tiedot;
-//     syyluokat.forEach((syyluokka) => {
-//         if (syyluokka.id == tunnus) {
-//             return syyluokka.categoryName;
-//         }
-//     });
-// }
-// function haeSyykoodit(tunnus) {
-//     let syykoodit = mt.syykoodit.tiedot;
-//     syykoodit.forEach((syykoodi) => {
-//         if (syykoodi.id == tunnus) {
-//             return syykoodi.detailedCategoryName;
-//         }
-//     });
-// }
-
-// function haeKolmastaso(tunnus) {
-//     let kolmastaso = mt.kolmastaso.tiedot;
-//     kolmastaso.forEach((taso) => {
-//         if (taso.id == tunnus) {
-//             return taso.thirdCategoryName;
-//         }
-//     });
-// }
-
 function haeAsemaTiedot(indeksi) {
+    // Tallennetaan html tiedostossa oleva div elementti muuttujaan
     let aikataulu = document.getElementById('aikataulu');
+    // Varmistetaan, jos on aikaisempia aikataulutietoja, että ne poistetaan.
     aikataulu.innerHTML = '';
     // Tallennetaan junat olio muuttujaan
     let element = junat[indeksi];
+    // Apumuuttuja, jolla seurataan missä kohtaa aikataulua ollaan menossa while silmukassa.
     let i = 0;
+    // Jos juna on saanut aikataulutiedon.
     if (element.akt != null) {
+        // Käydään aikataulu läpi while silmukassa.
         while (i < element.akt.timeTableRows.length) {
+            // Jos asema on ensimmäinen asema aikataulussa
             if (i == 0) {
+                // Haetaan aseman nimi, lähtöaika ja raide numero listaan
                 let tiedot = arrivalTiedot(element.akt.timeTableRows[i]);
+                // Asetetaan tiedot sivupaneeliin (näytetään ainoastaan lähtöaika)
                 rakennaTiedotSivupaneeliinLahto(tiedot);
+                // Kasvatetaan apumuuttujaa yhdellä
                 i++;
+                // Hypätään loput vaiheet tästä while silmukan kierroksesta ja mennään seuraavaan.
                 continue;
             }
+            // Jos asema on viimeinen asema aikataulussa
             if (i == element.akt.timeTableRows.length - 1) {
+                // Haetaan aseman nimi, saapumisaika ja raide numero listaan
                 let tiedot = arrivalTiedot(element.akt.timeTableRows[i]);
+                // Asetetaan tiedot sivupaneeliin (näytetään ainoastaan saapumisaika)
                 rakennaTiedotSivupaneeliinTulo(tiedot);
+                // Kasvatetaan apumuuttujaa yhdellä
                 i++;
+                // Hypätään loput vaiheet tästä while silmukan kierroksesta ja mennään seuraavaan.
                 continue;
+                // Jos asema ei ole ensimmäinen eikä viimeinen, ja asema on sellainen, jossa pysähdytään.
             } else if (element.akt.timeTableRows[i].commercialStop == true) {
+                // Haetaan aseman nimi, lähtöaika, saapumisaika ja raidenumero listaan
+                // tiedot haetaan kahdesta seuraavasta aikataulu tiedosta, koska tarvitaan saapumis ja lähtöaika
                 let tiedot = arrivalDepartedTiedot(element.akt.timeTableRows[i], element.akt.timeTableRows[i + 1]);
+                // Asetetaan tiedot sivupaneeliin (näytetään molemmat lähtö- ja saapumisaika)
                 rakennaTiedotSivupaneeliin(tiedot);
+                // Kasvatetaan apumuuttujaa kahdella
                 i = i + 2;
+                // Hypätään loput vaiheet tästä while silmukan kierroksesta ja mennään seuraavaan.
                 continue;
             }
+            // Kasvatetaan apumuuttujaa yhdellä jos kyseessä on esim sellainen asema jossa ei pysähdytä
             i++;
         }
     }
 }
+// Kerätään aseman nimi, lähtöaika tai tuloaika riippuen mitä asemaa käydään läpi ja raidenumero
+// tiedot asetetaan listaan ja palautetaan lista
 function arrivalTiedot(asema) {
     let lista = [];
     let asemaNimi = etsiAsemanNimi(asema.stationUICCode);
@@ -200,6 +204,8 @@ function arrivalTiedot(asema) {
     lista.push(asemaNimi, lahtoaika, raideNro);
     return lista;
 }
+// Kerätään aseman nimi, lähtöaika, tuloaika (lähtöaika ja tuloaika otetaan kahdesta eri asematiedosta)
+// ja raidenumero. Tiedot asetetaan listaan ja palautetaan lista
 function arrivalDepartedTiedot(tulo, lahto) {
     let lista = [];
     let asemaNimi = etsiAsemanNimi(tulo.stationUICCode);
@@ -209,66 +215,120 @@ function arrivalDepartedTiedot(tulo, lahto) {
     lista.push(asemaNimi, tuloaika, lahtoaika, raideNro);
     return lista;
 }
+// Rakennetaan tiedot sivupaneeliin (sisältää lähtö- ja saapumisajan)
 function rakennaTiedotSivupaneeliin(lista) {
+    // Haetaan html tiedostosta div elementti, jonka id on aikataulu ja asetetaan se muuttujaan
     let aikataulu = document.getElementById('aikataulu');
+    // Luodaan div elementti aikataulu boxille ja asetetaan se muuttujaan
     let divContainer = document.createElement('div');
+    // Luodaan div elementti nimelle ja raidenumerolle (vasen puoli)ja asetetaan se muuttujaan
     let divAsemaNimi = document.createElement('div');
+    // Luodaan div elementti lähtö ja saapumisajalle (oikea puoli) ja asetetaan se muuttujaan
     let divAjat = document.createElement('div');
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divContainer.className = 'mycontainer';
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divAsemaNimi.className = 'asemaNimi';
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divAjat.className = 'ajat';
+    // Asetetaan aseman nimi ja laiturin numero div elementtiin
     divAsemaNimi.innerHTML = '<p><b>' + lista[0] + '</b><br />Laituri ' + lista[3] + '</p>';
+    // Asetetaan junan lähtö- ja saapumisaika div elementtiin
     divAjat.innerHTML = '<p>' + lista[1] + '<br />' + lista[2] + '</p>';
+    // Asetetaan asema nimi div elementti aikataulu boxi div elementin sisälle
     divContainer.appendChild(divAsemaNimi);
+    // Asetetaan lähtö- ja saapumisaika div elementti aikataulu boxi div elementin sisälle
     divContainer.appendChild(divAjat);
+    // Asetetaan aikataulu boxi div elementti aikataulu div elementin sisälle
     aikataulu.appendChild(divContainer);
 }
+// Rakennetaan tiedot sivupaneeliin (sisältää lähtöajan)
 function rakennaTiedotSivupaneeliinLahto(lista) {
+    // Haetaan html tiedostosta div elementti, jonka id on aikataulu ja asetetaan se muuttujaan
     let aikataulu = document.getElementById('aikataulu');
+    // Luodaan div elementti aikataulu boxille ja asetetaan se muuttujaan
     let divContainer = document.createElement('div');
+    // Luodaan div elementti nimelle ja raidenumerolle (vasen puoli)ja asetetaan se muuttujaan
     let divAsemaNimi = document.createElement('div');
+    // Luodaan div elementti lähtöajalle (oikea puoli) ja asetetaan se muuttujaan
     let divAjat = document.createElement('div');
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divContainer.className = 'mycontainer';
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divAsemaNimi.className = 'asemaNimi';
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divAjat.className = 'ajat';
+    // Asetetaan aseman nimi ja laiturin numero div elementtiin
     divAsemaNimi.innerHTML = '<p><b>' + lista[0] + '</b><br />Laituri ' + lista[2] + '</p>';
+    // Asetetaan junan lähtöaika div elementtiin
     divAjat.innerHTML = '<p><br />' + lista[1] + '</p>';
+    // Asetetaan asema nimi div elementti aikataulu boxi div elementin sisälle
     divContainer.appendChild(divAsemaNimi);
+    // Asetetaan lähtöaika div elementti aikataulu boxi div elementin sisälle
     divContainer.appendChild(divAjat);
+    // Asetetaan aikataulu boxi div elementti aikataulu div elementin sisälle
     aikataulu.appendChild(divContainer);
 }
+// Rakennetaan tiedot sivupaneeliin (sisältää tuloajan)
 function rakennaTiedotSivupaneeliinTulo(lista) {
+    // Haetaan html tiedostosta div elementti, jonka id on aikataulu ja asetetaan se muuttujaan
     let aikataulu = document.getElementById('aikataulu');
+    // Luodaan div elementti aikataulu boxille ja asetetaan se muuttujaan
     let divContainer = document.createElement('div');
+    // Luodaan div elementti nimelle ja raidenumerolle (vasen puoli)ja asetetaan se muuttujaan
     let divAsemaNimi = document.createElement('div');
+    // Luodaan div elementti tuloajalle (oikea puoli) ja asetetaan se muuttujaan
     let divAjat = document.createElement('div');
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divContainer.className = 'mycontainer';
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divAsemaNimi.className = 'asemaNimi';
+    // Annetaan div elementille class nimi, jolla voidaan esim. antaa elementille muotoiluja
     divAjat.className = 'ajat';
+    // Asetetaan aseman nimi ja laiturin numero div elementtiin
     divAsemaNimi.innerHTML = '<p><b>' + lista[0] + '</b><br />Laituri ' + lista[2] + '</p>';
+    // Asetetaan junan tuloaika div elementtiin
     divAjat.innerHTML = '<p>' + lista[1] + '<br /></p>';
+    // Asetetaan asema nimi div elementti aikataulu boxi div elementin sisälle
     divContainer.appendChild(divAsemaNimi);
+    // Asetetaan tuloaika div elementti aikataulu boxi div elementin sisälle
     divContainer.appendChild(divAjat);
+    // Asetetaan aikataulu boxi div elementti aikataulu div elementin sisälle
     aikataulu.appendChild(divContainer);
 }
 
+// Asetusten säätö elementti:
+// Haetaan kellon vieressä oleva rattaan kuva elementti ja asetetaan se muuttujaan
 let settings = document.getElementById('settings');
+// Haetaan asetukset elementti ja asetetaan se muuttujaan
 let options = document.getElementById('options');
+// Haetaan checkboxi, jolla voidaan valita halutaanko seurata junaa vai ei, kun se valitaan
 let seuraaJunaa = document.getElementById('seuraaJunaa');
+// Haetaan checkboxi, jolla voidaan valita halutaanko zoomata junaa vai ei, kun se valitaan
 let zoomaus = document.getElementById('zoomaus');
+// Haetaan checkboxi, jolla voidaan valita halutaanko näyttää tarkuusympyrä vai ei, kun se valitaan
 let tarkkusympyra = document.getElementById('tarkkusympyra');
+// Haetaan kohta, jolla voidaan valita mikä on tarkkuusympyrän maksimi koko
 let tarkkusympyraTarkkuus = document.getElementById('tarkkusympyraTarkkuus');
+// Haetaan peruuta nappi
 let peruuta = document.getElementById('peruuta');
+// Haetaan tallenna nappi
 let tallenna = document.getElementById('tallenna');
+// Asetetaan kuuntelija rattaan kuva elementtiin, joka laukaisee funktion jos elementtiä painetaan
 settings.addEventListener('click', openSettings);
+// Asetetaan kuuntelija peruuta nappiin, joka laukaisee funktion jos sitä painetaan
 peruuta.addEventListener('click', klikattiinPeruuta);
+// Asetetaan kuuntelija tallenna nappiin, joka laukaisee funktion jos sitä painetaan
 tallenna.addEventListener('click', klikattiinTallenna);
+// Asetukset valikko on oletuksena pois näkyvistä
 options.style.display = 'none';
+// Tuodaan oletus asetukset pääohjelmasta
 seuraaJunaa.checked = seuraaMerkkia;
 zoomaus.checked = zoomaaLahemmas;
 tarkkusympyra.checked = piirraTarkkuus;
 tarkkusympyraTarkkuus.value = maxTarkkuus;
 
+// Avataan ja suljetaan asetukset valikko
 function openSettings() {
     if (options.style.display === 'none') {
         options.style.display = 'block';
@@ -277,9 +337,12 @@ function openSettings() {
     }
 }
 
+// Suljetaan asetukset valikko jos klikataan peruuta nappia
 function klikattiinPeruuta() {
     options.style.display = 'none';
 }
+
+// Tallennetaan asetukset pääohjelmaan jos klikataan tallenna nappia ja suljetaan asetukset valikko
 function klikattiinTallenna() {
     seuraaMerkkia = seuraaJunaa.checked;
     zoomaaLahemmas = zoomaus.checked;
