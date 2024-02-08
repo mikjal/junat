@@ -14,8 +14,9 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 		selainVersio = selainAgent.substring(OffsetVersion + 7);
 
 		if(parseFloat(selainVersio) < 41) {
-			window.stop();
 			alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
+			window.stop();
+			
 		}
 	}
 
@@ -25,14 +26,16 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 		selainNimi = "Opera";
 		selainVersio = selainAgent.substring(OffsetVersion + 7);
 		if (parseFloat(selainVersio) < 17)
+		alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
 		window.stop();
-	alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
+	
 	}
 
 	// Microsoft internet explorer 
 	else if ((OffsetVersion = selainAgent.indexOf("MSIE")) != -1) {
+		alert('Käytä toista selainta')
 			window.stop();
-			alert('Käytä toista selainta')
+			
 	}
 
 	// Firefox 
@@ -40,8 +43,9 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 		selainNimi = "Firefox";
 		selainVersio = selainAgent.substring(OffsetVersion + 7);
 		if(parseFloat(selainVersio) < 44) {
-			window.stop();
 			alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
+			window.stop();
+			
 		}
 	}
 
@@ -52,8 +56,10 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 		if ((OffsetVersion = selainAgent.indexOf("Version")) != -1)
 			selainVersio = selainAgent.substring(OffsetVersion + 8);
 		if(parseFloat(selainVersio) < 10) {
-			window.stop();
 			alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
+			window.stop();
+			
+			
 		}
 	}
 
