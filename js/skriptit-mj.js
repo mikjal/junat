@@ -17,34 +17,10 @@ const mt = {
         osoite: 'https://rata.digitraffic.fi/api/v1/metadata/operators',
         tiedot: null,
     },
-/*
-    junatyypit: {
-        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/train-types',
-        tiedot: null,
-    },
-*/
     liikennepaikat: {
         osoite: 'https://rata.digitraffic.fi/api/v1/metadata/stations',
         tiedot: null,
-    },
-/*
-    syyluokat: {
-        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/cause-category-codes',
-        tiedot: null,
-    },
-    syykoodit: {
-        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/detailed-cause-category-codes',
-        tiedot: null,
-    },
-    kolmastaso: {
-        osoite: 'https://rata.digitraffic.fi/api/v1/metadata/third-cause-category-codes',
-        tiedot: null,
-    },
-    junat: {
-        osoite: 'https://rata.digitraffic.fi/api/v1/live-trains',
-        tiedot: null,
-    },
-*/
+    }
 };
 
 class junaPohja {
@@ -214,7 +190,9 @@ function paivitaKarttamerkki(indeksi) {
         
 }
 
-// siirretään karttamerkin keskityspistettä oikealle (käytössä kun sivupaneli on auki "isolla" näytöllä)
+// Siirtää karttamerkin keskitystä oikealle riittävän isolla näytöllä, käytetään sivupaneelin ollessa auki
+// Parametrit: LatLng-piste
+// Palauttaa: alkuperäisen LatLng-pisteen jos "pieni" näyttö, muuten palauttaa oikealle siirretyn pisteen paikan
 function laskeKeskitys(latlng) {
 
     if (onkoPieniNaytto()) {
@@ -229,30 +207,40 @@ function laskeKeskitys(latlng) {
 
 }
 
+// Karttamerkin klikkauksen tai koskettamisen käsittelevä funktio
+// Parametrit: klikatun/kosketetun (=valitun) junan numero
 function klik(junanNumero) {
-    
+    // etsitään valittu juna junat-taulukosta
     let juna = junat[etsiJunaTaulukosta(junanNumero)];
 
     // tarkistetaan valittiinko sama juna uudelleen, jos valittiin, poistetaan valinta
     if (valittuJuna == junanNumero) {
         poistaValinta();
         suljePaneeli();
-
     } else {
+        // oliko jokin toinen juna ennestään valittuna, poistetaan sen valinta
         if (valittuJuna != -1) poistaValinta(valittuJuna);
+        // muutetaan valitun junan karttamerkki punaiseksi
         juna.karttamerkki._icon.classList.add('punainen');
+        // asetetaan valittuJuna-muuttujaan junan numero
         valittuJuna = juna.numero;
 
-        let zoomi = (zoomaaLahemmas && kartta.getZoom()<10) ? 10 : kartta.getZoom();
-        kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],zoomi);
-        //kartta.setZoom(zoomi);
-        //kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],zoomi);
+        // tarvitseeko zoomata ja onko zoomaus sallittu?
+        if (kartta.getZoom() < 10 && zoomaaLahemmas) {
+            // zoomataan lähemmäs valitun junan karttamerkkiä
+            kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],10);    
+        } else if (seuraaMerkkia) { // onko seuraa valitun junan merkkiä päällä?
+            // seuraus on päällä, asetetaan junan merkki enemmän oikealle, koska sivupaneeli tulee olemaan auki
+            kartta.setView(laskeKeskitys([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]))  
+        }
 
+        // Aukaistaan sivupaneli
         sivuPaneeli(junanNumero);
-        //kartta.setView(laskeKeskitys([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]),zoomi);
     }
 }
 
+// Tuo sivupaneelin näytölle
+// Parametrit: klikatun/kosketetun (=valitun) junan numero
 function sivuPaneeli(junanNumero) {
     // sivupaneeli näkyville
     naytaPaneeli();
@@ -506,7 +494,6 @@ function ajastettuPaivitys() {
         
             // jos junan tietoja ei ole päivitetty 10 minuuttiin poistetaan se
             if (nyt - new Date(juna.paivitettyViimeksi) >= 1000*60*10) {
-                console.log('Poistetaan juna',juna.numero);
                 poistaJuna(juna.numero);
             }
         })
