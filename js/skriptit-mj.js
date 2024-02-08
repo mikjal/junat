@@ -185,6 +185,13 @@ function paivitaKarttamerkki(indeksi) {
             });
         }
 
+        if (juna.karttamerkki._events.click.length < 2) {
+            console.log('Junan',juna.numero,'onclick korjattu');
+            juna.karttamerkki.on('click',() => {
+                klik(juna.numero);
+            });
+        }
+        
         if (valittuJuna == juna.numero) paivitaTiedotOsio(juna.numero);
     }
         
