@@ -31,7 +31,7 @@ img.punainen {
   box-sizing: border-box;
 }
 
-
+/* Asetukset rattaankuva iconi */
 .material-symbols-outlined {
   float: right;
   font-variation-settings:
@@ -41,9 +41,12 @@ img.punainen {
   'opsz' 24
 }
 
+/* Muutetaan hiiren osoitin osoittavaksi sormeksi, kun hiiri viedään rattaan päälle */
 .material-symbols-outlined:hover{
   cursor: pointer;
 }
+
+/* Asetukset valikko */
 #options{
   background-color: #444444;
   position: fixed;
@@ -61,26 +64,36 @@ img.punainen {
   font-family: "Inter", sans-serif;
   z-index: 1102;
 }
+
+/* Asetukset valikon teksti */
 #options p {
   margin: 0px;
 }
 
+/* Peruuta painike asetukset valikossa*/
 #peruuta {
   margin-left: 170px;
 }
+
+/* Tallenna painike asetukset valikossa*/
 #tallenna {
   margin-left: 10px;
 }
+
+/* Tallenna ja peruuta painikkeet asetukset valikossa */
 #options button {
   margin-top: 8px;
   padding: 8px;
   border-radius: 4px;
 }
 
+/* Asetukset valikon checkboxien tekstit */
 .optionsLabel {
   margin-top: 8px;
   margin-bottom: 8px;
 }
+
+/* Asetukset valikon paikkaympyrän tarkkuus valikko */
 select {
   width: 50%;
   padding: 10px 10px;
@@ -90,6 +103,7 @@ select {
   margin-top: 5px;
 }
 
+/* Aikataulut harmaa laatikko */
 .mycontainer {
   display: flex;
   background-color: darkgrey;
@@ -97,15 +111,18 @@ select {
   margin-top: 5px;
   border-radius: 4px;
 }
+
+/* Aikataulujen harmaan laatikon vasen puoli, missä nimi ja raide numero */
 .mycontainer > .asemaNimi {
   width: 80%;
   padding-left: 10px;
 }
+/* Aikataulujen harmaan laatikon oikea puoli, missä saapumis- ja lähtöajat */
 .mycontainer > .ajat {
   width: 20%;
   padding-left: 10px;
 }
-
+/* Aikataulujen harmaan laatikon oikea puoli, missä saapumis- ja lähtöajat */
 .ajat {
   text-align: left;
   padding-right: 20px;
@@ -205,6 +222,8 @@ select {
     font-size: 50%;
     padding: 12px;
   }
+
+  /* Asetukset rattaankuva iconi mobiili tilassa */
   .material-symbols-outlined {
     float: right;
     font-size: 15px !important;
@@ -218,18 +237,20 @@ select {
     box-shadow: 0;
     border-radius: 0;
   }
+  /* Checkboxien tekstit mobiili tilassa */
   .optionsLabel{
     margin-top: 2px;
     margin-bottom: 2px;
     width: 10px;
     height: 10px;
   }
-
+  /* Asetukset valikon paikkaympyrän tarkkuus valikko mobiili tilassa*/
   select {
     margin-top: 5px;
     font-size: 80%;
     padding: 5px;
   }
+  /* Asetukset valikko mobiili tilassa */
   #options {
   font-size: 50%;
   width: 200px;
@@ -238,12 +259,15 @@ select {
   top: 0px;
   border-radius: 0;
   }
+  /* Peruuta painike mobiili tilassa */
   #peruuta {
     margin-left: 92px;
   }
+  /* Tallenna painike mobiili tilassa */
   #tallenna {
     margin-left: 8px;
   }
+  /* Tallenna ja peruuta painikkeet mobiili tilassa */
   #options button {
     font-size: 90%;
     margin-top: 8px;
