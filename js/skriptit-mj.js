@@ -48,8 +48,6 @@ class junaPohja {
         this.luotu = new Date();
         // milloin viimeisin päivitys tietoihin
         this.paivitettyViimeksi = null;
-        // lasketaan montako kertaa sama paikkatieto tulee peräkkäin
-        this.paikkatietolaskuri = 0;
         // piirretäänkö karttamerkki vai ei
         this.piirraMerkki = true;
         // voiko karttamerkin valita kartalta (klikkaus/kosketus)
@@ -81,18 +79,24 @@ function etsiJunaTaulukosta(junanNumero) {
 
 }
 
+// luo, päivittää tai poistaa junan karttamerkin kartalle/kartalta, 
+// lisäksi muodotetaan merkille tooltip sekä tarkkuusympyrä jos sellainen on sallittu
+// Parametrit: junan indeksi junat-taulukossa
 function paivitaKarttamerkki(indeksi) {
     
     // haetaan viittaus junaan
     let juna = junat[indeksi];
 
-    // saako karttamerkin piirtaa kartalle
+    // saako karttamerkin piirtää kartalle?
     if (juna.piirraMerkki) {
+        // karttamerkin saa piirtää kartalle
         // tarkistetaan onko merkki jo olemassa
         if (juna.karttamerkki) {
-            // tarkkuusympyrä?
+            // onko junalla tarkkuusympyrä?
             if (juna.tarkkuusympyra) {
+                // poistetaan vanha ympyrä
                 juna.tarkkuusympyra.removeFrom(kartta);
+                // piirretään uusi ympyrä jos sen piirtäminen on sallittu
                 if (piirraTarkkuus) {
                     juna.tarkkuusympyra = L.circle([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]], {
                         radius: (maxTarkkuus != 0 && juna.pkt.accuracy > maxTarkkuus) ? maxTarkkuus : juna.pkt.accuracy,
@@ -102,7 +106,7 @@ function paivitaKarttamerkki(indeksi) {
                 }
             }
             
-            // merkki on jo olemassa, siirretään sitä
+            // junan karttamerkki on jo olemassa, siirretään sitä
             juna.karttamerkki.setLatLng([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]]);
 
             // jos kyseessä on valittu juna ja seurataan merkkiä, keskitetään se ruudulle
@@ -112,7 +116,7 @@ function paivitaKarttamerkki(indeksi) {
             }
 
         } else {
-            // merkkiä ei vielä ole kartalla, lisätään se
+            // karttamerkin saa piirtää kartalle, mutta merkkiä ei vielä ole kartalla, lisätään se
             // varmistetaan ensin että paikkatieto on olemassa
             if (juna.pkt) {
     
@@ -120,12 +124,12 @@ function paivitaKarttamerkki(indeksi) {
                 if (juna.pkt.accuracy && piirraTarkkuus) {
                     juna.tarkkuusympyra = L.circle([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]], {
                         radius: juna.pkt.accuracy,
-                        opacity: 0,
-                        //fillColor: transparent,
-                        fillOpacity: 0.5
+                        opacity: 0.2,
+                        fillOpacity: 0.2
                     }).addTo(kartta);
                 }
 
+                // luodaan junalle uusi karttamerkki, jonka tooltippiin tulee junan numero
                 let uusiKarttamerkki = L.marker([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]])
                 .bindTooltip(juna.numero.toString())
                 .addTo(kartta);
@@ -137,39 +141,45 @@ function paivitaKarttamerkki(indeksi) {
                 }
                 // karttamerkin sijoitus junaan
                 juna.karttamerkki = uusiKarttamerkki;
-       
             }
         } 
     } else { 
-        // jos junalla on merkki kartalla, poistetaan se
+        // karttamerkkiä ei saa piirtää kartalle
+        // jos junalla on jo merkki kartalla, poistetaan se
         if (juna.karttamerkki) poistaKarttamerkki(indeksi);
-        // jos juna on valittu juna, poistetaan valinta
+        // jos juna on valittu juna, poistetaan valinta ja suljetaan sivupaneeli
         if (juna.numero == valittuJuna) {
             poistaValinta();
             suljePaneeli();
         }
     }// end if juna.piirramerkki
 
-    // jos junan merkin saa piirtää ja junalla on aikataulu, paikkatieto sekä karttamerkki
+    // tarkistetaan saako junan merkin piirtää sekä onko junalla aikataulutieto, paikkatieto sekä karttamerkki
     if (juna.piirraMerkki && juna.akt && juna.pkt && juna.karttamerkki) {
-        
-        // jos merkki on harmaan, poistetaan sen määrittelevä luokka
+        // kaikki tiedot löytyy
+        // jos merkki on harmaa, poistetaan sen määrittelevä luokka jolloin se muuttuu siniseksi
         if (juna.karttamerkki._icon.classList.contains('harmaa')) {
             juna.karttamerkki._icon.classList.remove('harmaa');
         }
 
         // muodostetaan tooltip
         if (juna.tiedot.nimi) {
-            let tooltipTeksti = (juna.tiedot.nimi) ? '<strong>'+juna.tiedot.nimi+'</strong>' : juna.numero.toString();
+            // junan nimi
+            let tooltipTeksti = (juna.tiedot.nimi) ? '<strong>' + juna.tiedot.nimi + '</strong>' : juna.numero.toString();
+            // lähtöpaikka ja määränpää
             tooltipTeksti += (juna.tiedot.lahtopaikka && juna.tiedot.maaranpaa) ? '<br>' + juna.tiedot.lahtopaikka + ' - ' + juna.tiedot.maaranpaa : '';
+            // aikaero eli onko juna myöhässä, ajoissa vai etuajassa
             if (juna.tiedot.aikaero != null) {
                 tooltipTeksti +=    (juna.tiedot.aikaero < -1) ? '<br>'+Math.abs(juna.tiedot.aikaero)+' minuuttia etuajassa' : 
                                     (juna.tiedot.aikaero == -1) ? '<br>Minuutin etuajassa' : 
                                     (juna.tiedot.aikaero == 0) ? '<br>Aikataulussa' : 
                                     (juna.tiedot.aikaero == 1) ? '<br>Minuutin myöhässä' : '<br>'+juna.tiedot.aikaero+' minuuttia myöhässä';
             }
+            // junan nopeus
             tooltipTeksti += (juna.tiedot.nopeus != null) ? '<br>Nopeus: ' + juna.tiedot.nopeus + ' km/h' : '';
+            // merkkiin tarkkuus
             tooltipTeksti += (juna.pkt.accuracy) ? '<br>Merkin tarkkuus: ' + juna.pkt.accuracy + ' m' : '';
+            // päivityksen kellonaika
             tooltipTeksti += (juna.pkt) ? '<br><small>Päivitetty '+(new Date(juna.pkt.timestamp)).toLocaleTimeString()+'</small>' : '';
 
             juna.karttamerkki.setTooltipContent(tooltipTeksti);
@@ -197,7 +207,7 @@ function paivitaKarttamerkki(indeksi) {
         
 }
 
-// Siirtää karttamerkin keskitystä oikealle riittävän isolla näytöllä, käytetään sivupaneelin ollessa auki
+// Siirtää karttamerkin keskitystä oikealle riittävän isolla näytöllä, käytetään kun sivupaneeli on näytöllä
 // Parametrit: LatLng-piste
 // Palauttaa: alkuperäisen LatLng-pisteen jos "pieni" näyttö, muuten palauttaa oikealle siirretyn pisteen paikan
 function laskeKeskitys(latlng) {
@@ -246,8 +256,8 @@ function klik(junanNumero) {
     }
 }
 
-// Tuo sivupaneelin näytölle
-// Parametrit: klikatun/kosketetun (=valitun) junan numero
+// Kutsuu funktioita jotka tuovat sivupaneelin näytölle ja päivittävät sen tiedot
+// Parametrit: valitun junan numero
 function sivuPaneeli(junanNumero) {
     // sivupaneeli näkyville
     naytaPaneeli();
@@ -257,6 +267,9 @@ function sivuPaneeli(junanNumero) {
     naytaAikataulu(junanNumero);    
 }
 
+// kutsuu funktiota joka muodostaa aikataulun ja laskee tämän jälkeen aikataulun
+// maksimikorkeutta suhteessa sivupaneelin korkeuteen
+// Parametrit: valitun junan numero
 function naytaAikataulu(junanNumero) {
     // nollataan aikataulun vanha maksimikorkeus
     document.querySelector('#aikataulu').style.maxHeight =  '';
@@ -277,6 +290,7 @@ function naytaAikataulu(junanNumero) {
     let aikataulunUusiKorkeus = Math.round(aikataulunMitat.height+paneelinMitat.bottom-aikataulunMitat.bottom-lisa);
     document.querySelector('#aikataulu').style.maxHeight =  aikataulunUusiKorkeus + 'px';
 }
+
 
 function naytaPaneeli() {
     document.querySelector('#paneeli').style.left = '0px';
