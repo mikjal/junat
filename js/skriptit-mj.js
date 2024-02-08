@@ -162,8 +162,6 @@ function paivitaKarttamerkki(indeksi) {
         if (juna.tiedot.nimi) {
             let tooltipTeksti = (juna.tiedot.nimi) ? '<strong>'+juna.tiedot.nimi+'</strong>' : juna.numero.toString();
             tooltipTeksti += (juna.tiedot.lahtopaikka && juna.tiedot.maaranpaa) ? '<br>' + juna.tiedot.lahtopaikka + ' - ' + juna.tiedot.maaranpaa : '';
-            //tooltipTeksti += (juna.tiedot.operaattori) ? '<br>' + juna.tiedot.operaattori : '';
-            tooltipTeksti += '<br>'+seuraavaAsema(indeksi);
             if (juna.tiedot.aikaero != null) {
                 tooltipTeksti +=    (juna.tiedot.aikaero < -1) ? '<br>'+Math.abs(juna.tiedot.aikaero)+' minuuttia etuajassa' : 
                                     (juna.tiedot.aikaero == -1) ? '<br>Minuutin etuajassa' : 
@@ -185,6 +183,15 @@ function paivitaKarttamerkki(indeksi) {
             });
         }
 
+        /*
+        if (juna.karttamerkki._events.click.length < 2) {
+            console.log('Junan',juna.numero,'onclick korjattu');
+            juna.karttamerkki.on('click',() => {
+                klik(juna.numero);
+            });
+        }
+        */
+        
         if (valittuJuna == juna.numero) paivitaTiedotOsio(juna.numero);
     }
         
@@ -325,6 +332,9 @@ function poistaKarttamerkki(indeksi) {
         junat[indeksi].tarkkuusympyra.removeFrom(kartta);
         junat[indeksi].tarkkuusympyra = null;
     }
+    // merkki on poistettu, joten se ei ole enää valittavissa
+    junat[indeksi].merkkiValittavissa = false;
+
 }
 
 function paivitaJunanTiedot(JSONtieto) {
@@ -431,10 +441,10 @@ function piirretaankoKarttamerkki(indeksi) {
     let nyt = new Date();
     let juna = junat[indeksi];
 
-    // onko junalla paikkatieto, jos on, onko se yli 2 minuuttia vanhaa?
+    // onko junalla paikkatieto, jos on, onko se yli 3 minuuttia vanhaa?
     if (juna.pkt) {
-        if (nyt - new Date(juna.pkt.timestamp) >= 1000*60*2) {
-            //console.log('Paikkatieto on yli 2 minuuttia vanha: ',juna.numero)
+        if (nyt - new Date(juna.pkt.timestamp) >= 1000*60*3) {
+            //console.log('Paikkatieto on yli 3 minuuttia vanha: ',juna.numero)
             return false;
         }
     }
