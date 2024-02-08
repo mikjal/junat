@@ -32,6 +32,7 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 	// Microsoft internet explorer 
 	else if ((OffsetVersion = selainAgent.indexOf("MSIE")) != -1) {
 			window.stop();
+			alert('Käytä toista selainta')
 	}
 
 	// Firefox 
