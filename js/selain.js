@@ -15,6 +15,7 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 
 		if(parseFloat(selainVersio) < 41) {
 			window.stop();
+			alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
 		}
 	}
 
@@ -25,6 +26,7 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 		selainVersio = selainAgent.substring(OffsetVersion + 7);
 		if (parseFloat(selainVersio) < 17)
 		window.stop();
+	alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
 	}
 
 	// Microsoft internet explorer 
@@ -38,6 +40,7 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 		selainVersio = selainAgent.substring(OffsetVersion + 7);
 		if(parseFloat(selainVersio) < 44) {
 			window.stop();
+			alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
 		}
 	}
 
@@ -49,6 +52,7 @@ if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
 			selainVersio = selainAgent.substring(OffsetVersion + 8);
 		if(parseFloat(selainVersio) < 10) {
 			window.stop();
+			alert('Selaimesi on vanhentunut, päivitä uudempaan versioon')
 		}
 	}
 
