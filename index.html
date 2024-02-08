@@ -23,27 +23,34 @@
         <!-- Selaimen tarkastus -->
         <noscript><h2>Selaimesi ei tue Javascriptiä</h2></noscript>
         <script src="js/selain.js"></script>
-
+        <!-- Asetukset valikko: -->
         <div id="options">
             <p>Valittaessa juna:</p>
+            <!-- Asetus halutaanko seurata junan karttamerkkiä -->
             <label class="optionsLabel" for="seuraaJunaa">Seuraa junan karttamerkkiä </label>
             <input class="optionsLabel" type="checkbox" name="seuraaJunaa" id="seuraaJunaa" /><br />
+            <!-- Asetus halutaanko zoomata junan karttamerkkiä -->
             <label class="optionsLabel" for="zoomaus">Zoomaa tarvittaessa lähemmäksi </label>
             <input class="optionsLabel" type="checkbox" name="zoomaus" id="zoomaus" /><br /><br />
             <p>Karttamerkin tarkkuus:</p>
+            <!-- Asetus piirretäänkö tarkkuusympyrä karttamerkin ympärille -->
             <label class="optionsLabel" for="tarkkusympyra">Piirrä tarkkuusympyrä </label>
             <input class="optionsLabel" type="checkbox" name="tarkkusympyra" id="tarkkusympyra" /><br />
+            <!-- Asetus millä valitaan tarkkuusympyrän maksimi tarkkuus -->
             <select id="tarkkusympyraTarkkuus" name="tarkkusympyraTarkkuus">
                 <option value="0">ei rajoitusta</option>
                 <option value="20">20 metriä</option>
                 <option value="40">40 metriä</option>
             </select>
             <br />
+            <!-- Peruuta ja tallenna painikkeet -->
             <button id="peruuta">Peruuta</button>
             <button id="tallenna">Tallenna</button>
         </div>
+        <!-- Päivämäärä ja aika laatikko -->
         <div id="pvmAika" class="laatikko">
             <div>
+                <!-- Asetukset rattaan kuva painike -->
                 <span id="settings" class="material-symbols-outlined"> settings </span>
             </div>
             <div class="aika"></div>
@@ -60,6 +67,7 @@
                 <p id="aikaEro"></p>
                 <p id="seuraavaAsema"></p>
             </div>
+            <!-- Aikataulut: -->
             <div id="aikataulu"></div>
         </div>
 
