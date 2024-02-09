@@ -28,6 +28,8 @@ for (let nimi in mt) {
     });
 }
 
+
+
 // haetaan JSON-tieto annetusta osoitteesta
 // Parametrit: osoite josta JSON-tiedot haetaan ja paluufunktio jota kutsutaan kun vastaus saapuu
 // Palauttaa: virhekoodin ja null, jos tapahtui virhe tai null ja vastauksen jos vastaus saatiin onnistuneesti
@@ -187,6 +189,8 @@ function ajastettuPaivitys() {
                 });
             }
         }
+        
     }
+    
 }
 
