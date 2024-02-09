@@ -55,17 +55,6 @@ class junaPohja {
     }
 }
 
-function paikannaJuna(junanNumero) {
-    let indeksi = etsiJunaTaulukosta(junanNumero);
-    if (indeksi != -1) {
-        let juna = junat[indeksi];
-        console.log('Junan indeksi:',indeksi);
-        console.log(junat[indeksi]);
-        if (juna.pkt) kartta.setView([juna.pkt.location.coordinates[1],juna.pkt.location.coordinates[0]],12);
-
-    }
-}
-
 // Etsii junan indeksinumeron junat-taulukosta
 // Parametrit: etsittävän junan numero
 // Palauttaa: junan indeksinumeron junat-taulukossa tai -1 jos junaa ei löydy
