@@ -232,7 +232,9 @@ function klik(junanNumero) {
 
     // tarkistetaan valittiinko sama juna uudelleen, jos valittiin, poistetaan valinta
     if (valittuJuna == junanNumero) {
+        // poistetaan valitun junan valinta
         poistaValinta();
+        // suljetaan paneeli
         suljePaneeli();
     } else {
         // oliko jokin toinen juna ennestään valittuna, poistetaan sen valinta
@@ -291,26 +293,30 @@ function naytaAikataulu(junanNumero) {
     document.querySelector('#aikataulu').style.maxHeight =  aikataulunUusiKorkeus + 'px';
 }
 
-
+// tuo vasemmasta laidasta näytölle paneelin, jossa esitetään junan tiedot ja aikataulu
 function naytaPaneeli() {
     document.querySelector('#paneeli').style.left = '0px';
     document.querySelector('#pienenna').classList.remove('kaanna');
 }
 
+// testaa onko käytössä pieni näyttö samoilla arvoilla, jotka ovat käytössä css-tiedostossa
+// Palauttaa: true, jos käytössä on pieni näyttö (leveys max. 700 tai korkeus max. 600 pikseliä) tai false, jos käytössä ei ole pieni näyttö
 function onkoPieniNaytto() {
-    // vastaako media query pienen äytön arvoja?
+    // vastaako media query pienen näytön arvoja?
     return window.matchMedia('(max-width: 700px), (max-height: 600px)').matches;
 }
 
+// laskee paneelin maksimikorkeuden näytön kokoon suhteutettuna
 function laskePaneelinKorkeus() {
+    // haetaan laskennassa tarvittavat tiedot
     let marginaalit = (onkoPieniNaytto()) ? 10 : 20;
     let paneeli = document.querySelector('#paneeli');
     let ylareuna = parseInt(window.getComputedStyle(paneeli).top.replace('px',''));
     
-    // päivitetään sivupaneelin maksimikorkeus
+    // päivitetään paneelin maksimikorkeus
     paneeli.style.maxHeight = window.innerHeight - ylareuna - marginaalit + 'px';
     
-    // onko sivupaneeli pienennettynä ja ikkunan koko vaihtui pienestä isoksi?
+    // onko paneeli pienennettynä ja ikkunan koko vaihtui pienestä isoksi?
     // tuodaan sivupaneeli tällöin näkyville
     if (window.getComputedStyle(paneeli).left != '0px' && window.getComputedStyle(paneeli).left != '-400px') {
         paneeli.style.left = '0px';
@@ -318,23 +324,33 @@ function laskePaneelinKorkeus() {
     }
 }
 
+// "pienentää" paneelin vasempaan sivuun, käytössä vain "pienillä" näytöillä
 function pienennaPaneeli() {
     let paneeli = document.querySelector('#paneeli');
+    // onko paneeli kokonaan esillä?
     if (paneeli.style.left == '0px') {
+        // kyllä, paneeli on kokonaan esillä, joten pienennetään se sivuun
+        // käännetään pienennysnappia 180 astetta
         document.querySelector('#pienenna').classList.add('kaanna');
         paneeli.style.left = '-236px';
     } else {
+        // ei, paneeli on jo pienennettynä, tuodaan se kokonaan esille
+        // poistetaan pienennysnapin kääntö
         document.querySelector('#pienenna').classList.remove('kaanna');
         paneeli.style.left = '0px';
     }
     
 }
 
+// sulkee paneelin 
 function suljePaneeli() {
+    // poistetaan valitun junan valinta
     poistaValinta();
+    // siirretään paneeli pois näkyvistä
     document.querySelector('#paneeli').style.left = '-400px';
 }
 
+// poistetaan junan karttamerkki juna-oliosta sekä kartalta
 function poistaKarttamerkki(indeksi) {
     // jos junalle on tallennettu karttamerkki, poistetaan se kartalta ja merkataan merkki nulliksi junan tietoihin
     if (junat[indeksi].karttamerkki) {
@@ -351,13 +367,15 @@ function poistaKarttamerkki(indeksi) {
 
 }
 
+// päivitetään junan paikkatieto tai muut tiedot (mm. aikataulu)
+// Parametrit: tieto JSON-muodossa
 function paivitaJunanTiedot(JSONtieto) {
-    // tarkistetaan että tiedoissa on junan numero
+    // tarkistetaan että tiedoissa on junan numero, jos ei ole, ei päivitetä mitään
     if (JSONtieto.hasOwnProperty('trainNumber')) {
         // junan numero löytyy, selvitetään onko juna jo taulukossa
         let junanIndeksi = etsiJunaTaulukosta(JSONtieto.trainNumber)
 
-        // jos junaIndeksi == -1, junaa ei löytynyt taulukosta
+        // jos junaIndeksi on -1, junaa ei löytynyt taulukosta
         if (junanIndeksi == -1) {
             // junaa ei löydy taulukosta, lisätään se
             let uusiJuna = new junaPohja(JSONtieto.trainNumber);
@@ -384,7 +402,8 @@ function paivitaJunanTiedot(JSONtieto) {
             juna.pkt = JSONtieto;
             juna.tiedot.nopeus = JSONtieto.speed;
             
-        }  // tarkistetaan onko tiedoissa version, jolloin kyseessä on muut junan tiedot
+        }  
+        // tarkistetaan onko tiedoissa version, jolloin kyseessä on muut junan tiedot
         else if (JSONtieto.hasOwnProperty('version')) {
             // käsitellään junan tiedot
 
@@ -400,7 +419,6 @@ function paivitaJunanTiedot(JSONtieto) {
                     // uuden tiedon versionumero on pienempi kuin jo tallennetun, poistutaan funktiosta
                     return
                 }
-                
                 // päivitetään junan tiedot
                 juna.akt = JSONtieto;
                 // päivitetään tieto siitä onko juna aikataulussa vai etuajassa/myöhässä
@@ -415,7 +433,7 @@ function paivitaJunanTiedot(JSONtieto) {
             }
         }
 
-        // pävitetään viimeisen päivityksen aika
+        // päivitetään viimeisen päivityksen aika
         juna.paivitettyViimeksi = new Date();
         // tarkistetaan voiko merkin piirtää kartalle
         juna.piirraMerkki = piirretaankoKarttamerkki(junanIndeksi);
@@ -425,47 +443,56 @@ function paivitaJunanTiedot(JSONtieto) {
     } 
 }
 
+// poistetaan valittun junan valinta
 function poistaValinta() {
+    // varmistetaan että jokin juna on valittuna
     if (valittuJuna != -1) {
+        // haetaan valitun junan indeksi junat-taulukossa
         let indeksi = etsiJunaTaulukosta(valittuJuna);
+        // jos juna löytyi junat-taulukosta poistetaan sen karttamerkistä luokkamääritys, jolloin sen väri muuttuu takaisin siniseksi
         if (indeksi != -1) if (junat[indeksi].karttamerkki) junat[indeksi].karttamerkki._icon.classList.remove('punainen');
+        // "nollataan" valinta
         valittuJuna = -1;
     }
 }
 
+// poistetaan junan karttamerkki ja juna-olio junat-taulukosta
+// Parametrit: poistettavan junan numero
 function poistaJuna(junanNumero) {
+    // etsitään junan indeksi junat-taulukosta
     let indeksi = etsiJunaTaulukosta(junanNumero);
+    // poistetaan junan karttamerkki
     poistaKarttamerkki(indeksi);
+    // poistetaan juna junat-taulukosta
     junat.splice(indeksi,1);
+    // poistetaan juna päivitysjonosta
     paivitysjono = paivitysjono.filter((numero) => {
         return numero != junanNumero;
     });
 
+    // jos poistettava juna on valittuna, poistetaan valinta ja suljetaan paneeli
     if (valittuJuna == junanNumero) {
         poistaValinta();
         suljePaneeli();
     }
-
 }
 
 
-// tarkistaa voidaanko karttamerkki näyttää kartalla
-// palauttaa true jos voidaan ja false jos merkki pitää piilottaa
+// tarkistaa voidaanko karttamerkki näyttää kartalla vai piilotettaanko se
+// Palauttaa: true jos karttamerkin voi näyttää kartalla ja false jos merkki pitää piilottaa
 function piirretaankoKarttamerkki(indeksi) {
     let nyt = new Date();
     let juna = junat[indeksi];
 
-    // onko junalla paikkatieto, jos on, onko se yli 3 minuuttia vanhaa?
+    // onko junalla paikkatieto ja jos on, onko se yli 3 minuuttia vanhaa?
     if (juna.pkt) {
         if (nyt - new Date(juna.pkt.timestamp) >= 1000*60*3) {
-            //console.log('Paikkatieto on yli 3 minuuttia vanha: ',juna.numero)
             return false;
         }
     }
 
     // onko junalla paikkatieto, mutta ei muita tietoja ja onko juna luotu yli 2 minuuttia sitten
     if (juna.pkt != null && juna.akt == null && (nyt - new Date(juna.luotu) >= 1000*60*2)) {
-        //console.log('Junalla on paikkatieto, mutta ei muita tietoja ja se on luotu yli 2 minuuttia sitten: ',juna.numero)
         return false;
     }
 
@@ -474,7 +501,6 @@ function piirretaankoKarttamerkki(indeksi) {
         let perilla = onkoPerilla(indeksi);
         if (perilla) {
             if (nyt - new Date(perilla) >= 1000*60*3) {
-                //console.log('Juna on ollut perillä yli 3 minuuttia: ',juna.numero)
                 return false;
             }
         }
@@ -485,16 +511,21 @@ function piirretaankoKarttamerkki(indeksi) {
 
 }
 
+// viiden sekunnin välein ajettava päivitys, joka 6. kerta haetaan ja päivitetään kaikkien junien paikkatiedot
+// muilla kerroilla haetaan ja päivitetään päivitysjonosta max. 10 ensimmäisen junan tiedot
 function ajastettuPaivitys() {
     paivitysLaskuri += 1;
+    // onko 6. kerta?
     if (paivitysLaskuri == 6) {
         // joka 6. kerta haetaan manuaalisesti kaikkien junien paikkatiedot 
         // ja tarkistetaan karttamerkkien piirrettävyys ja poistettavat junat
         paivitysLaskuri = 0;
 
         haeJSON('https://rata.digitraffic.fi/api/v1/train-locations/latest/', (virhekoodi, vastaus) => {
+            // jos virhekoodi on jotain muuta kuin null, tapahtui virhe joten ilmoitetaan siitä
             if (virhekoodi) console.warn('Virhe haettaessa kaikkien junien paikkatietoja!\n', virhekoodi);
             else {
+                // virhekoodi=null eli ei virhettä, päivitetään kaikkien vastauksessa olevien junien paikkatiedot
                 pysaytaPaivitys = true;
                 vastaus.forEach((rivi) => {
                     paivitaJunanTiedot(rivi);
@@ -511,6 +542,7 @@ function ajastettuPaivitys() {
             // tarkistetaan piirretäänkö merkki kartalle
             let tarkistus = piirretaankoKarttamerkki(indeksi);
             
+            // onko tarkistuksen lopputulos eri kuin tallenttu tulos?
             if (juna.piirraMerkki != tarkistus) {
                 juna.piirraMerkki = tarkistus;
                 paivitaKarttamerkki(indeksi);
@@ -525,28 +557,27 @@ function ajastettuPaivitys() {
     } else {
         // otetaan päivitysjonosta max. 10 ensimmäistä junaa ja haetaan niille tiedot
         let paivitystenMaara = (paivitysjono.length >= 10) ? 10 : paivitysjono.length;
-        // leikataan junien numerot pois päivitysjonosta
+        // "leikataan" junien numerot pois päivitysjonosta
         let kasiteltavat = paivitysjono.splice(0, paivitystenMaara);
         for (let i=0; i<kasiteltavat.length; i++) {
             if (typeof kasiteltavat[i] === 'number') {
+                // haetaan junan tiedot
                 haeJSON('https://rata.digitraffic.fi/api/v1/trains/latest/'+kasiteltavat[i], (virhekoodi, vastaus) => {
+                    // jos virhekoodi on jotain muuta kuin null, tapahtui virhe
                     if (virhekoodi) console.warn('Virhe haettaessa junan',kasiteltavat[i],'tietoja!\n', virhekoodi);
                     else {
+                        // tarkistetaan että junalle saatiin tiedot ja päivitetään ne
                         if (vastaus.length > 0) {
                             paivitaJunanTiedot(vastaus[0]);
                         } 
-                        /*
-                        else {
-                            console.log('Junalle ei löydy tietoja:',kasiteltavat[i]);
-                            //tarkistaPoistetaankoJuna(kasiteltavat[i]);
-                        } */
                     }
                 });
-            } // if
-        } // for
-    } // else
+            }
+        }
+    }
 }
 
+// luodaan kartta kartta-alueelle
 function luoKartta() {
     // Luodaan kartta ilman zoomausnappuloita (tulevat oletuksena ylös vasemmalle)
     kartta = new L.map('kartta-alue', {
@@ -570,6 +601,9 @@ function luoKartta() {
         .addTo(kartta);
 }
 
+// haetaan JSON-tieto annetusta osoitteesta
+// Parametrit: osoite josta JSON-tiedot haetaan ja paluufunktio jota kutsutaan kun vastaus saapuu
+// Palauttaa: virhekoodin ja null, jos tapahtui virhe tai null ja vastauksen jos vastaus saatiin onnistuneesti
 function haeJSON(osoite, paluufunktio) {
     fetch(osoite) // haetaan tiedot osoitteesta
         .then((vastaus) => {
@@ -589,7 +623,8 @@ function haeJSON(osoite, paluufunktio) {
         });
 }
 
-
+// asettaa MQTT-kuuntelijan joka käsittelee tilattuja tietoja
+// käyttää ulkopuolista Eclipse Paho MQTT-koodia
 function asetaMQTTkuuntelija() {
     MQTTyhteys = new Paho.MQTT.Client('rata.digitraffic.fi', 443, 'myclientid_' + parseInt(Math.random() * 10000, 10));
 
@@ -601,7 +636,6 @@ function asetaMQTTkuuntelija() {
     // Mitä tehdään kun viesti saapuu:
     MQTTyhteys.onMessageArrived = function (message) {
         if (!pysaytaPaivitys) paivitaJunanTiedot(JSON.parse(message.payloadString));
-        else console.log('MQTT-päivitys ohitettu');
     };
 
     let maaritykset = {
@@ -619,6 +653,7 @@ function asetaMQTTkuuntelija() {
         },
     };
 
+    // muodostetaan yhteys
     MQTTyhteys.connect(maaritykset);
 }
 
@@ -633,6 +668,9 @@ for (let nimi in mt) {
     });
 }
 
+// etsii metatiedoista asemalle selkokielisen nimen
+// Parametrit: aseman uic-koodi
+// Palauttaa: aseman selkokielisen nimen tai null jos nimeä ei löydy
 function etsiAsemanNimi(uic) {
     // Tarkistetaan onko liikennepaikkojen metatiedot käytettävissä
     if (mt.liikennepaikat.tiedot) {
@@ -648,8 +686,6 @@ function etsiAsemanNimi(uic) {
             let asemanimi = mt.liikennepaikat.tiedot[indeksi].stationName;
             // poistetaan asema-sana, jos sellainen löytyy
             asemanimi = asemanimi.replace(' asema', '');
-            //asemanimi = asemanimi.replace('tavara', '(tavara)');
-            //asemanimi = asemanimi.replace('lajittelu', '(lajittelu)');
             // palautetaan asemanimi
             return asemanimi;
         }
@@ -658,6 +694,8 @@ function etsiAsemanNimi(uic) {
     return null;
 }
 
+// kun sivu on saatu ladattua luodaan kartta, lasketaan paneelin korkeus nykyisellä selainikkunan korkeudella,
+// asetetaan MQTT-kuuntelija ja ajastetaan päivitykset
 window.onload = () => {
 
     luoKartta();
