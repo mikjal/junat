@@ -5,21 +5,30 @@ body {
     margin: 0;
 }
 
+/* Kartta-divin kokomääritykset */
 #kartta-alue {
     height: 100%;
     width: 100%;
-
 }
 
-img.harmaa {
+/* Leafletin sininen karttamerkki harmaaksi */
+.harmaa {
     filter: grayscale(1);
     cursor: grab;
 }
 
-img.punainen {
+/* Leafletin sininen karttamerkki punaiseksi */
+.punainen {
     filter: hue-rotate(150deg);
 }
 
+/* Leafletin tooltipin fonttimääritykset */
+.leaflet-tooltip {
+  font-family: "Inter", sans-serif;
+  font-size: 1.1em;
+}
+
+/* luokkamääritys kellon ja junantietojen alueille */
 .laatikko {
   position: fixed;
   color: #ffffff;
@@ -128,6 +137,7 @@ select {
   padding-right: 20px;
 }
 
+/* kellonajan ja päivämäärän asemointi ja kokomääritykset */
 #pvmAika {
   top: 0;
   left: 0;
@@ -140,6 +150,7 @@ select {
   font-weight: 500;
 }
 
+/* vasemman sivupaneelin määritykset */
 #paneeli {
   margin-top: 10px;
   margin-left: 10px;
@@ -152,8 +163,7 @@ select {
   overflow: auto;
 }
 
-.aika {
-    
+.aika {    
     font-size: 3em;
     color: #ffffff;
 }
@@ -163,31 +173,34 @@ select {
     font-size: 1.75em;
 }
 
-.leaflet-tooltip {
-    font-family: "Inter", sans-serif;
-    font-size: 1.1em;
-}
-
+/* sivupaneelin sulku- ja pienennysnappien määritykset */
 .nappula {
   font-size: 35px;
   float: right; 
   color: #999;
 }
 
+/* hiiren osoitinmääritys sivupaneelin nappuloille */
 .nappula:hover {
   cursor: pointer;
 
 }
 
+/* aikataulun vierityspalkin määritykset */
 #aikataulu {
   overflow: auto;
   scrollbar-width: thin;
 }
 
-
+/* sivupaneelin pienennnysnappi (oletuksena piilossa= */
 #pienenna {
   display: none;
   transition: all 0.5s ease;
+}
+
+/* sivupaneelin pienennysnapin pyöräytys 180 astetta */
+.kaanna {
+  transform: rotate(180deg);
 }
 
 #tiedot h2 {
@@ -209,11 +222,10 @@ select {
  font-size: 105%;
 }
 
-.kaanna {
-  transform: rotate(180deg);
-}
-
+/* määritykset laitteille joiden näyttö on max. 700 pikseliä leveä tai 600 pikseliä korkea */
 @media screen and (max-width: 700px), (max-height: 600px) {
+  
+  /* muutokset kellonajan ja päivämäärän asemointiin ja kokomäärityksiin pienellä näytöllä */
   #pvmAika {
     margin-top: 0;
     margin-left: 0;
@@ -233,10 +245,13 @@ select {
     'GRAD' 0,
     'opsz' 24
   }
+
+  /* luokkamääritysten muutokset kellon ja junantietojen alueille pienellä näytöllä */
   .laatikko {
     box-shadow: 0;
     border-radius: 0;
   }
+  
   /* Checkboxien tekstit mobiili tilassa */
   .optionsLabel{
     margin-top: 2px;
@@ -244,12 +259,14 @@ select {
     width: 10px;
     height: 10px;
   }
+
   /* Asetukset valikon paikkaympyrän tarkkuus valikko mobiili tilassa*/
   select {
     margin-top: 5px;
     font-size: 80%;
     padding: 5px;
   }
+
   /* Asetukset valikko mobiili tilassa */
   #options {
   font-size: 50%;
@@ -259,14 +276,17 @@ select {
   top: 0px;
   border-radius: 0;
   }
+
   /* Peruuta painike mobiili tilassa */
   #peruuta {
     margin-left: 92px;
   }
+
   /* Tallenna painike mobiili tilassa */
   #tallenna {
     margin-left: 8px;
   }
+
   /* Tallenna ja peruuta painikkeet mobiili tilassa */
   #options button {
     font-size: 90%;
@@ -275,6 +295,7 @@ select {
     border-radius: 4px;
   }
 
+  /* vasemman sivupaneelin muuttuneet määritykset pienillä näytöillä */
   #paneeli {
     margin-top: 5px;
     margin-left: 0;
@@ -285,9 +306,8 @@ select {
     font-size: 70%;
   }
 
+  /* sivupaneelin pienennä-nappi näkyviin pienillä näytöillä */
   #pienenna {
     display: block;
   }
-  
-  
 }
