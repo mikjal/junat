@@ -40,7 +40,8 @@ function tietojenHaku(indeksi) {
         element.tiedot.maaranpaa = etsiAsemanNimi(element.akt.timeTableRows[element.akt.timeTableRows.length - 1].stationUICCode);
         // Tarkistetaan löytyykö operaattori lista
         if (operaattoriLista) {
-            // Verrataan junan operaattori lyhennettä ja jos se on sama lyhenne asetetaan operaattorin nimi junat olioon
+            // Verrataan junan operaattori lyhennettä ja jos se on sama lyhenne asetetaan operaattorin
+            // nimi junat olioon
             operaattoriLista.forEach((operaattori) => {
                 if (operaattori.operatorShortCode == element.akt.operatorShortCode) {
                     element.tiedot.operaattori = operaattori.operatorName;
