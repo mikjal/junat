@@ -192,7 +192,7 @@ select {
   scrollbar-width: thin;
 }
 
-/* sivupaneelin pienennnysnappi (oletuksena piilossa= */
+/* sivupaneelin pienennnysnappi (oletuksena piilossa) */
 #pienenna {
   display: none;
   transition: all 0.5s ease;
@@ -201,6 +201,7 @@ select {
 /* sivupaneelin pienennysnapin pyöräytys 180 astetta */
 .kaanna {
   transform: rotate(180deg);
+  transform-origin: 50% 55%;
 }
 
 #tiedot h2 {
@@ -304,10 +305,12 @@ select {
     min-height: 128px;
     width: 266px;
     font-size: 70%;
+    overflow-x: hidden;
   }
 
   /* sivupaneelin pienennä-nappi näkyviin pienillä näytöillä */
   #pienenna {
     display: block;
+    margin: 0 9px 0 4px;
   }
 }

@@ -72,7 +72,7 @@ function pienennaPaneeli() {
         // kyllä, paneeli on kokonaan esillä, joten pienennetään se sivuun
         // käännetään pienennysnappia 180 astetta
         document.querySelector('#pienenna').classList.add('kaanna');
-        paneeli.style.left = '-236px';
+        paneeli.style.left = '-225px';
     } else {
         // ei, paneeli on jo pienennettynä, tuodaan se kokonaan esille
         // poistetaan pienennysnapin kääntö
