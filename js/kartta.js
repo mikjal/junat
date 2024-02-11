@@ -5,8 +5,8 @@ function luoKartta() {
     // Luodaan kartta ilman zoomausnappuloita (tulevat oletuksena ylös vasemmalle)
     kartta = new L.map('kartta-alue', {
         zoomControl: false,
-        center: [62.95772, 26.05957],
-        zoom: 7,
+        center: [64.5, 26.05957],
+        zoom: 6,
     });
 
     // Lisätään rasteri-kerroksena karttakuvat

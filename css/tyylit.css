@@ -276,6 +276,7 @@ select {
   left: 160px;
   top: 0px;
   border-radius: 0;
+  padding-left: 10px;
   }
 
   /* Peruuta painike mobiili tilassa */
